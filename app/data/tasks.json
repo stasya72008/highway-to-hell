@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "name": "Livin' easy",
+    "date": "today",
+    "status": "active"
+  },
+  {
+    "id": 2,
+    "user_id": 1,
+    "date": "tomorrow",
+    "name": "Livin' free",
+    "status": "deleted"
+  },
+  {
+    "id": 3,
+    "user_id": 1,
+    "date": "always",
+    "name": "I'm on the highway to hell",
+    "status": "active"
+  }
+]

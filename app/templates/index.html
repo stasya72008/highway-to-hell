@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Highway to hell</title>
+</head>
+<body>
+    <h2>Hello, {{ users.username }}!</h2>
+
+    {% for task in tasks.data %}
+    <div><p>{{ task.date }}: <b>{{ task.name }}</b></p></div>
+    <div><p> ... </p></div>
+    {% endfor %}
+
+</body>
+</html>
