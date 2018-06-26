@@ -1,10 +1,13 @@
+from flask import Flask, render_template
+from os import path
 import json
 
-from flask import render_template
-from os import path
+from rest.data.data import TASK_TO_ADD, USER_TO_ADD
+
+app = Flask(__name__)
 
 from app import app
-from app.data import USER_TO_ADD, TASK_TO_ADD
+
 
 data_dir = path.join(path.dirname(__file__), 'data')
 users_data = path.join(data_dir, 'users.json')
@@ -31,42 +34,39 @@ def add_user():
     return json.dumps(users)
 
 
-@app.route('/users/<user_id>', methods=['DELETE'])
+@app.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     for user in users:
-        if user['id'] == int(user_id):
+        if user['id'] == user_id:
             users.remove(user)
-        else:
-            print ('My friends are gonna be there too')
-    return json.dumps(users)
+            return json.dumps(users)
+    return not_found(404)
 
 
-@app.route('/users/<user_id>', methods=['GET'])
+@app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     for user in users:
-        if user['id'] == int(user_id):
+        if user['id'] == user_id:
             return json.dumps(user)
-        else:
-            return 'Oops'
+    return not_found(404)
 
 
-@app.route('/users/<user_id>/tasks', methods=['GET'])
+@app.route('/users/<int:user_id>/tasks', methods=['GET'])
 def get_user_tasks(user_id):
     user_tasks = list()
     for task in tasks:
-        if task['user_id'] == int(user_id):
+        if task['user_id'] == user_id:
             user_tasks.append(task)
 
     return json.dumps(user_tasks)
 
 
-@app.route('/tasks/<task_id>', methods=['GET'])
+@app.route('/tasks/<int:task_id>', methods=['GET'])
 def get_task(task_id):
     for task in tasks:
-        if task['id'] == int(task_id):
+        if task['id'] == task_id:
             return json.dumps(task)
-        else:
-            return 'Oops'
+    return not_found(404)
 
 
 @app.route('/tasks', methods=['POST'])
@@ -75,17 +75,21 @@ def add_task():
     return json.dumps(tasks)
 
 
-@app.route('/tasks/<task_id>', methods=['DELETE'])
+@app.route('/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
     for task in tasks:
-        if task['id'] == int(task_id):
+        if task['id'] == task_id:
             tasks.remove(task)
-        else:
-            print ('Ain\'t nothin\' that I\'d rather do')
-    return json.dumps(users)
+            return json.dumps(users)
+    return not_found(404)
 
 
-@app.route('/users/<user_id>/tasks/<task_id>/actions/<action>', methods=['POST'])
+@app.route('/users/<int:user_id>/tasks/<int:task_id>/actions/<action>', methods=['POST'])
 def set_task_action():
     # TODO implement logic for actions
     pass
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('error.html'), 404
