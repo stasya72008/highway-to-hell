@@ -1,30 +1,37 @@
+import json
+
+with open('date_template.json', 'r') as f:
+    date_template = json.loads(f.read())
+
 years_route = '/calendar/years'
 
-months_route = '{}/<int:year_id>/months'.format(years_route)
-days_route = '{}/<int:month_id>/days'.format(months_route)
-hours_route = '{}/<int:day_id>/hours'.format(days_route)
+months_route = years_route + '/<int:year_id>/months'
+days_route = months_route + '/<int:month_id>/days'
+hours_route = days_route + '/<int:day_id>/hours'
 
-months_link = '{}/{{year_id}}/months'.format(years_route)
-days_link = '{}/{{month_id}}/days'.format(months_link)
-hours_link = '{}/{{day_id}}/hours'.format(days_link)
+months_link = years_route + '/{year_id}/months'
+days_link = months_link + '/{month_id}/days'
+hours_link = days_link + '/{day_id}/hours'
 
-year_2018_link = '{}/2018/months'.format(years_route)
-year_2019_link = '{}/2019/months'.format(years_route)
-year_2020_link = '{}/2020/months'.format(years_route)
+year_2018_link = years_route + '/2018/months'
+year_2019_link = years_route + '/2019/months'
+year_2020_link = years_route + '/2020/months'
 
+
+# ================ HTML ========================
 
 body_html = '''<html><head>
                 <style>
-                   table, th, td {{border: 1px solid black;border-collapse: collapse;}}
+                   table, th, td {{border: 1px solid black; collapse;}}
                    a {{text-decoration: none; color: black; background-color: while; }}
                 </style>
                </head><body>{}</body></html>'''
 
-
 # ================ HOUR ========================
+# ToDO(den) change (add) to button "Create task"
 # bgcolor: #eee - busy, #ffffff - free
-
 # hour_id
+# task_name
 # (add) action for task creation
 hour_cell_free = '''
 <tr>
@@ -32,10 +39,6 @@ hour_cell_free = '''
     <th bgcolor="#ffffff" colspan="3"> </th>
     <th width=60 bgcolor="#ffffff">(add)</th>
 </tr>'''
-
-# hour_id
-# task_name
-# (add) action for task creation
 hour_cell = '''
 <tr>
         <th width=60 bgcolor="#eee">{hour_id}</th>
@@ -47,49 +50,47 @@ hour_cell = '''
 # month_id (days_link)
 # day_id
 # hours
-# pr_day_id, nx_day_id
+# prev_day_id, next_day_id
 # ToDo add switch to previous and next month
 # ToDo(den) move title with previous and next (month, year, day) to out
 hour_table = '''
     <table style="width:50%">
         <tr>
-            <th colspan="2"><a href="{days_link}/{{pr_day_id}}/hours">{{pr_day_id}}</a></th>
-            <th><a href="{days_link}">{{day_id}}</a></th>
-            <th colspan="2"><a href="{days_link}/{{nx_day_id}}/hours">{{nx_day_id}}</a></th>
+            <th colspan="2"><a href="{days_link}/{{prev_day_id}}/hours">({{prev_day_id}})</a></th>
+            <th><a href="{days_link}">^ {{day_id}} ^</a></th>
+            <th colspan="2"><a href="{days_link}/{{next_day_id}}/hours">({{next_day_id}})</a></th>
         </tr>
         <tr>{{hours}}</tr>
     </table>
 '''.format(days_link=days_link)
 
-
 # ==================== DAY ===============
 # bgcolor: #eee - busy, #ffffff - free, #aaa - Day zero (from another month)
 
 # year_id (months_link)
-# month_id (months_link)
-# pr_m_id, pr_m_name - previous month
-# nx_m_id, nx_m_name - next month
+# prev_m_id, prev_m_name - previous month
+# next_m_id, next_m_name - next month
 # weeks
 # ToDo(den) move title with previous and next (month, year, day) to out
 day_table = '''
     <table style="width:50%">
         <tr>
-            <th colspan="2"><a href="{months_link}/{{pr_m_id}}/days">({{pr_m_name}})</a></th>
-            <th colspan="3"><a href="{months_link}">{{month_name}}</a></th>
-            <th colspan="2"><a href="{months_link}/{{nx_m_id}}/days">({{nx_m_name}})</a></th>
+            <th colspan="2"><a href="{months_link}/{{prev_m_id}}/days">({{prev_m_name}})</a></th>
+            <th colspan="3"><a href="{months_link}">^ {{month_name}} ^</a></th>
+            <th colspan="2"><a href="{months_link}/{{next_m_id}}/days">({{next_m_name}})</a></th>
         </tr>
         {{weeks}}
     </table>
 '''.format(months_link=months_link)
 
 # day_id
-
-day_cell_pr_month = '<th width=50 bgcolor="#aaa">{day_id}</th>'
+day_cell_another_month = '<th width=50 bgcolor="#aaa">{day_id}</th>'
 
 # task_count: int
 # year_id (hours_link)
 # month_id (hours_link)
 # day_id (hours_link)
+# task_count
 day_cell = '''
 <th width=50 bgcolor="#eee"> <a href="{hours_link}">{{day_id}} ({{task_count}})</a>
 </th>'''.format(hours_link=hours_link)
@@ -102,8 +103,8 @@ day_cell_free = '''
 week_table = ' <tr> {d_1} {d_2} {d_3} {d_4} {d_5} {d_6} {d_7} </tr>'
 
 # ================ MONTH ========================
-
 # ToDo(den) move title with previous and next (month, year, day) to out
+# year_id (months_link)
 month_table = '''
     <table style="width:50%">
         <tr>
@@ -136,6 +137,7 @@ month_table = '''
                        year_2019_link=year_2019_link,
                        year_2020_link=year_2020_link)
 
+# ToDO(den) drop it
 month_busy = {
     'January': "#ffffff",
     'February': "#ffffff",
@@ -172,7 +174,7 @@ year_table = '''
        <th><a href="{year_2019_link}"> 2019 </a></th>
        <th><a href="{year_2020_link}"> 2020 </a></th>
    </tr>
-</table>
-'''.format(year_2018_link=year_2018_link,
-           year_2019_link=year_2019_link,
-           year_2020_link=year_2020_link)
+</table>'''.format(year_2018_link=year_2018_link,
+                   year_2019_link=year_2019_link,
+                   year_2020_link=year_2020_link)
+

@@ -1,4 +1,3 @@
-import json
 from copy import copy
 
 from flask import Flask
@@ -7,17 +6,15 @@ from html_template import *
 app = Flask(__name__)
 
 
-with open('date_template.json', 'r') as file:
-    date_template = json.loads(file.read())
-
-
 @app.route(years_route)
+@app.route(years_route + '/')
 def get_years_page():
     # ToDo Get years from date_template and form page
     return body_html.format(year_table)
 
 
 @app.route(months_route)
+@app.route(months_route + '/')
 def get_months_page_for_year(year_id):
     # ToDo(den) add logic
     # https://github.com/stasya72008/highway-to-hell/issues/13
@@ -32,60 +29,59 @@ def get_months_page_for_year(year_id):
 
 
 @app.route(days_route)
+@app.route(days_route + '/')
 def get_days_page_for_month(year_id, month_id):
     # ToDo(den) add logic
     # https://github.com/stasya72008/highway-to-hell/issues/13
     # tasks = get_task_for_rest()
 
     # ToDo add switch to previous and next year
-    pr_month_id = 1 if month_id == 1 else month_id - 1
-    nx_month_id = 12 if month_id == 12 else month_id + 1
+    prev_month_id = 1 if month_id == 1 else month_id - 1
+    next_month_id = 12 if month_id == 12 else month_id + 1
 
-    pr_month_name = date_template[str(year_id)][str(pr_month_id)]['name']
-    nx_month_name = date_template[str(year_id)][str(nx_month_id)]['name']
+    prev_month_name = date_template[str(year_id)][str(prev_month_id)]['name']
+    next_month_name = date_template[str(year_id)][str(next_month_id)]['name']
     month_name = date_template[str(year_id)][str(month_id)]['name']
 
     day = day_table.format(year_id=year_id,
                            month_name=month_name,
-                           pr_m_id=pr_month_id,
-                           nx_m_id=nx_month_id,
-                           pr_m_name=pr_month_name,
-                           nx_m_name=nx_month_name,
+                           prev_m_id=prev_month_id,
+                           next_m_id=next_month_id,
+                           prev_m_name=prev_month_name,
+                           next_m_name=next_month_name,
                            weeks=gen_weeks(year_id, month_id, {}))
     return body_html.format(day)
 
 
 @app.route(hours_route)
+@app.route(hours_route + '/')
 def get_hours_page_for_day(year_id, month_id, day_id):
     # ToDo(den) add logic
     # https://github.com/stasya72008/highway-to-hell/issues/13
     # tasks = get_task_for_rest()
     tasks = {}
 
-    # ToDo add switch to previous and next month / year
     if day_id == 1:
-        pr_day_id = date_template[str(year_id)][str(month_id - 1)]['days']
-        nx_day_id = 2
-        # pr_month_id = month_id - 1
-        # nx_month_id = month_id
+        # ToDo add switch to previous and next month / year
+        # if month_id == 1:
+        #     prev_day_id = date_template[str(year_id - 1)]['12']['days']
+        # else:
+        #     prev_day_id = \
+        #         date_template[str(year_id)][str(month_id - 1)]['days']
+        prev_day_id = 1
+        next_day_id = 2
     elif day_id == date_template[str(year_id)][str(month_id)]['days']:
-        pr_day_id = day_id - 1
-        nx_day_id = 1
-        # pr_month_id = month_id
-        # nx_month_id = month_id + 1
+        prev_day_id = day_id - 1
+        next_day_id = day_id
     else:
-        pr_day_id = day_id - 1
-        nx_day_id = day_id + 1
-        # pr_month_id = month_id
-        # nx_month_id = month_id
+        prev_day_id = day_id - 1
+        next_day_id = day_id + 1
 
     hour = hour_table.format(year_id=year_id,
                              month_id=month_id,
                              day_id=day_id,
-                             pr_day_id=pr_day_id,
-                             nx_day_id=nx_day_id,
-                             # pr_month_id=pr_month_id,
-                             # nx_month_id=nx_month_id,
+                             prev_day_id=prev_day_id,
+                             next_day_id=next_day_id,
                              hours=gen_hours(tasks))
     return body_html.format(hour)
 
@@ -114,17 +110,18 @@ def gen_weeks(year_id, month_id, tasks):
 
     number_of_d = date_template[str(year_id)][str(month_id)]['days']
     first_d = date_template[str(year_id)][str(month_id)]['first_day']
+    # ToDo add switch to previous and next month / year
     if month_id == 1:
-        prev_month = date_template[str(year_id - 1)][str(12)]['days']\
-                     - first_d + 2
+        prev_month = date_template[str(year_id - 1)]['12']['days'] - \
+                     first_d + 2
     else:
-        prev_month = date_template[str(year_id)][str(month_id - 1)]['days']\
-                     - first_d + 2
+        prev_month = date_template[str(year_id)][str(month_id - 1)]['days'] - \
+                     first_d + 2
 
     # form previous month
     while first_d > day_of_week:
         week = week.replace('{{d_{}}}'.format(day_of_week),
-                            day_cell_pr_month.format(day_id=prev_month))
+                            day_cell_another_month.format(day_id=prev_month))
         prev_month += 1
         day_of_week += 1
 
@@ -157,7 +154,7 @@ def gen_weeks(year_id, month_id, tasks):
     d_index = 1
     while day_of_week < 8:
         week = week.replace('{{d_{}}}'.format(day_of_week),
-                            day_cell_pr_month.format(day_id=d_index))
+                            day_cell_another_month.format(day_id=d_index))
         d_index += 1
         day_of_week += 1
 
