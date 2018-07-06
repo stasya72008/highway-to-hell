@@ -2,11 +2,11 @@ from flask import Flask, render_template
 from os import path
 import json
 
+from flask import request
+
 from rest.data.data import USER_TO_ADD
 
 app = Flask(__name__)
-
-from app import app
 
 
 data_dir = path.join(path.dirname(__file__), 'data')
@@ -14,7 +14,8 @@ users_data = path.join(data_dir, 'users.json')
 tasks_data = path.join(data_dir, 'tasks.json')
 
 users = json.loads(open(users_data).read())
-tasks = json.loads(open(tasks_data).read())
+with open(tasks_data, 'r') as f:
+    tasks = json.loads(f.read())
 
 
 @app.route('/')
@@ -72,7 +73,8 @@ def get_task(task_id):
 
 
 @app.route('/tasks', methods=['POST'])
-def add_task(task):
+def add_task():
+    task = json.loads(request.data)
     tasks.append(task)
     return render_template('index.html'), 201
 
@@ -87,14 +89,11 @@ def delete_task(task_id):
 
 
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
-def update_task(task_id, **kwargs):
-    # ToDo(stasya) add logic for updating values for existing keys
-    # add check whether key is in kwargs
+def update_task(task_id):
+    data = dict(request.form.items())
     for task in tasks:
         if task['id'] == task_id:
-            for item in kwargs:
-                item = dict([item])
-                task.update(item)
+            task.update(data)
             return json.dumps(task)
     return not_found(404)
 
@@ -108,3 +107,7 @@ def set_task_action():
 @app.errorhandler(404)
 def not_found(error):
     return render_template('error.html'), 404
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
