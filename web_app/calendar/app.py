@@ -1,7 +1,7 @@
 import copy
 from flask import Flask
 
-from heplers import gen_hours, gen_weeks, date_template
+from helpers import gen_hours, gen_weeks, date_template
 from html_template import *
 
 
