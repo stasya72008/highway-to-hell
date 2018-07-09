@@ -3,6 +3,8 @@ import json
 
 import data.data_templates as template
 
+# ToDo(stasya) Move base_url to config after
+# https://github.com/stasya72008/highway-to-hell/projects/2#card-11155636
 base_url = 'http://localhost:5000/'
 user_tasks = base_url + 'users/{user_id}/tasks'
 task_url = base_url + 'tasks/{task_id}'
@@ -31,20 +33,18 @@ def create_task(user_id, task_name, date, status=''):
     task['name'] = task_name
     task['date'] = date
     task['status'] = status if status else 'active'
-    return requests.post(tasks_url, data=json.dumps(task))
+    return requests.post(tasks_url, json=json.dumps(task))
 
 
 def delete_task(task_id):
     return requests.delete(task_url.format(task_id=task_id))
 
 
-def edit_task(task_id, task_name='', date='', status=''):
+def edit_task(task_id, task_name='', date=''):
     data = {}
     if task_name:
         data['name'] = task_name
     if date:
         data['date'] = date
-    if status:
-        data['status'] = status
-    resp = requests.put(task_url.format(task_id=task_id), data=data)
+    resp = requests.put(task_url.format(task_id=task_id), json=data)
     return json.loads(resp.text)

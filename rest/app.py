@@ -4,8 +4,6 @@ import json
 
 from flask import request
 
-from rest.data.data import USER_TO_ADD
-
 app = Flask(__name__)
 
 
@@ -13,7 +11,9 @@ data_dir = path.join(path.dirname(__file__), 'data')
 users_data = path.join(data_dir, 'users.json')
 tasks_data = path.join(data_dir, 'tasks.json')
 
-users = json.loads(open(users_data).read())
+with open(users_data, 'r') as f:
+    users = json.loads(f.read())
+
 with open(tasks_data, 'r') as f:
     tasks = json.loads(f.read())
 
@@ -31,8 +31,9 @@ def get_users():
 
 @app.route('/users', methods=['POST'])
 def add_user():
-    users.append(USER_TO_ADD)
-    return json.dumps(users)
+    user = json.loads(request.json)
+    users.append(user)
+    return render_template('index.html'), 201
 
 
 @app.route('/users/<int:user_id>', methods=['DELETE'])
@@ -40,7 +41,7 @@ def delete_user(user_id):
     for user in users:
         if user['id'] == user_id:
             users.remove(user)
-            return json.dumps(users)
+            return render_template('index.html'), 201
     return not_found(404)
 
 
@@ -74,7 +75,9 @@ def get_task(task_id):
 
 @app.route('/tasks', methods=['POST'])
 def add_task():
-    task = json.loads(request.data)
+    # ToDo(stasya) Add json validation
+    # https://github.com/stasya72008/highway-to-hell/projects/2#card-11155844
+    task = json.loads(request.json)
     tasks.append(task)
     return render_template('index.html'), 201
 
@@ -84,13 +87,13 @@ def delete_task(task_id):
     for task in tasks:
         if task['id'] == task_id:
             tasks.remove(task)
-            return json.dumps(tasks)
+            return render_template('index.html'), 200
     return not_found(404)
 
 
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
 def update_task(task_id):
-    data = dict(request.form.items())
+    data = request.json
     for task in tasks:
         if task['id'] == task_id:
             task.update(data)
@@ -110,4 +113,6 @@ def not_found(error):
 
 
 if __name__ == '__main__':
+    # ToDo(stasya) move port to config after adding config
+    # https://github.com/stasya72008/highway-to-hell/projects/2#card-11155636
     app.run(host='0.0.0.0', port=5000, debug=True)
