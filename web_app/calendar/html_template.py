@@ -1,8 +1,5 @@
 from calendar_routes import *
-import json
 
-with open('date_template.json', 'r') as f:
-    date_template = json.loads(f.read())
 
 # ================ HTML ========================
 
@@ -15,7 +12,7 @@ body_html = '''<html><head>
 
 # ================ HOUR ========================
 # ToDO(den) change (add) to button "Create task"
-# bgcolor: #eee - busy, #ffffff - free
+# bgcolor: #eee - busy
 # hour_id
 # task_name
 # (add) action for task creation
@@ -51,8 +48,7 @@ hour_table = '''
 '''.format(days_link=days_link)
 
 # ==================== DAY ===============
-# bgcolor: #eee - busy, #ffffff - free, #aaa - Day zero (from another month)
-
+# bgcolor: #eee - busy, #aaa - Day zero (from another month)
 # year_id (months_link)
 # prev_m_id, prev_m_name - previous month
 # next_m_id, next_m_name - next month
@@ -81,75 +77,44 @@ day_cell = '''
 <th width=50 bgcolor="#eee"> <a href="{hours_link}">{{day_id}} ({{task_count}})</a>
 </th>'''.format(hours_link=hours_link)
 day_cell_free = '''
-<th width=50 bgcolor="#ffffff"> <a href="{hours_link}">{{day_id}}</a></th>
+<th width=50 > <a href="{hours_link}">{{day_id}}</a></th>
 '''.format(hours_link=hours_link)
 
 # ================ WEEK ========================
 
-week_table = ' <tr> {d_1} {d_2} {d_3} {d_4} {d_5} {d_6} {d_7} </tr>'
+week_table = ' <tr> [d_1] [d_2] [d_3] [d_4] [d_5] [d_6] [d_7] </tr>'
 
 # ================ MONTH ========================
 # ToDo(den) move title with previous and next (month, year, day) to out
+# bgcolor: #eee - busy
 # year_id (months_link)
+# month_id month_name
+# task_count
+month_cell_free = '''
+<th><a href="{months_link}/{{month_id}}/days">{{month_name}}</a></th>
+'''.format(months_link=months_link)
+month_cell = '''
+<th bgcolor="#eee"><a href="{months_link}/{{month_id}}/days">{{month_name}} ({{task_count}})</a></th>
+'''.format(months_link=months_link)
+
+# year_id (months_link)
+# prev_year_id next_year_id
 month_table = '''
     <table style="width:50%">
         <tr>
-            <th><a href="{year_2018_link}"> 2018 </a></th>
-            <th><a href="{year_2019_link}"> 2019 </a></th>
-            <th><a href="{year_2020_link}"> 2020 </a></th>
+            <th><a href="{years_route}/{{prev_year_id}}/months"> ({{prev_year_id}}) </a></th>
+            <th><a href="{years_route}">^ {{year_id}} ^</a></th>
+            <th><a href="{years_route}/{{next_year_id}}/months"> ({{next_year_id}}) </a></th>
         </tr>
-        <tr>
-            <th bgcolor="{{January}}"><a href="{months_link}/1/days">January{{January_task_count}}</a></th>
-            <th bgcolor="{{February}}"><a href="{months_link}/2/days">February{{February_task_count}}</a></th>
-            <th bgcolor="{{March}}"><a href="{months_link}/3/days">March{{March_task_count}}</a></th>
-        </tr>
-        <tr>
-            <th bgcolor="{{April}}"><a href="{months_link}/4/days">April{{April_task_count}}</a></th>
-            <th bgcolor="{{May}}"><a href="{months_link}/5/days">May{{May_task_count}}</a></th>
-            <th bgcolor="{{June}}"><a href="{months_link}/6/days">June{{June_task_count}}</a></th>
-        </tr>
-        <tr>
-            <th bgcolor="{{July}}"><a href="{months_link}/7/days">July{{July_task_count}}</a></th>
-            <th bgcolor="{{August}}"><a href="{months_link}/8/days">August{{August_task_count}}</a></th>
-            <th bgcolor="{{September}}"><a href="{months_link}/9/days">September{{September_task_count}}</a></th>
-        </tr>
-        <tr>
-            <th bgcolor="{{October}}"><a href="{months_link}/10/days">October{{October_task_count}}</a></th>
-            <th bgcolor="{{November}}"><a href="{months_link}/11/days">November{{November_task_count}}</a></th>
-            <th bgcolor="{{December}}"><a href="{months_link}/12/days">December{{December_task_count}}</a></th>
-        </tr>
-    </table>'''.format(months_link=months_link,
+        <tr> [m_1]  [m_2]  [m_3] </tr>
+        <tr> [m_4]  [m_5]  [m_6] </tr>
+        <tr> [m_7]  [m_8]  [m_9] </tr>
+        <tr> [m_10] [m_11] [m_12] </tr>
+    </table>'''.format(years_route=years_route,
+                       months_link=months_link,
                        year_2018_link=year_2018_link,
                        year_2019_link=year_2019_link,
                        year_2020_link=year_2020_link)
-
-# ToDO(den) drop it
-month_busy = {
-    'January': "#ffffff",
-    'February': "#ffffff",
-    'March': "#ffffff",
-    'April': "#ffffff",
-    'May': "#ffffff",
-    'June': "#ffffff",
-    'July': "#ffffff",
-    'August': "#ffffff",
-    'September': "#ffffff",
-    'October': "#ffffff",
-    'November': "#ffffff",
-    'December': "#ffffff",
-    'January_task_count': "",
-    'February_task_count': "",
-    'March_task_count': "",
-    'April_task_count': "",
-    'May_task_count': "",
-    'June_task_count': "",
-    'July_task_count': "",
-    'August_task_count': "",
-    'September_task_count': "",
-    'October_task_count': "",
-    'November_task_count': "",
-    'December_task_count': "",
-}
 
 # ================= YEAR ========================
 

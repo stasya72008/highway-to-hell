@@ -1,7 +1,9 @@
-from copy import copy
-
+import copy
 from flask import Flask
+
+from helpers import gen_hours, gen_weeks, date_template
 from html_template import *
+
 
 app = Flask(__name__)
 
@@ -16,15 +18,39 @@ def get_years_page():
 @app.route(months_route)
 @app.route(months_route + '/')
 def get_months_page_for_year(year_id):
-    # ToDo(den) add logic
-    # https://github.com/stasya72008/highway-to-hell/issues/13
-    # remove -----------
-    month_busy.update({'May': "#eee", 'May_task_count': " (3)"})
-    month_busy.update({'April': "#eee", 'April_task_count': " (1)"})
-    # ------------------
+    month = copy.copy(month_table)
+    for m_index in range(1, 13):
+        month_name = date_template[str(year_id)][str(m_index)]['name']
 
-    month = month_table.format(year_id=year_id,
-                               **month_busy)
+        # ToDo(den) add logic
+        # https://github.com/stasya72008/highway-to-hell/issues/13
+        # remove -----------
+        if m_index not in (1, 3, 9):
+            m_cell = month_cell_free.format(year_id=year_id,
+                                            month_id=m_index,
+                                            month_name=month_name)
+        else:
+            m_cell = month_cell.format(year_id=year_id,
+                                       month_id=m_index,
+                                       month_name=month_name,
+                                       task_count='3')
+        # ------------------
+        month = month.replace('[m_{}]'.format(m_index), m_cell)
+
+    if year_id == 2018:
+        prev_year_id = 2018
+        next_year_id = year_id + 1
+    elif year_id == 2020:
+        prev_year_id = year_id - 1
+        next_year_id = 2020
+    else:
+        prev_year_id = year_id - 1
+        next_year_id = year_id + 1
+
+    month = month.format(year_id=year_id,
+                         prev_year_id=prev_year_id,
+                         next_year_id=next_year_id)
+
     return body_html.format(month)
 
 
@@ -63,11 +89,6 @@ def get_hours_page_for_day(year_id, month_id, day_id):
 
     if day_id == 1:
         # ToDo add switch to previous and next month / year
-        # if month_id == 1:
-        #     prev_day_id = date_template[str(year_id - 1)]['12']['days']
-        # else:
-        #     prev_day_id = \
-        #         date_template[str(year_id)][str(month_id - 1)]['days']
         prev_day_id = 1
         next_day_id = 2
     elif day_id == date_template[str(year_id)][str(month_id)]['days']:
@@ -86,77 +107,5 @@ def get_hours_page_for_day(year_id, month_id, day_id):
     return body_html.format(hour)
 
 
-def gen_hours(tasks):
-    day = ''
-    for hour_id in range(0, 24):
-        # ToDo(den) add logic
-        # https://github.com/stasya72008/highway-to-hell/issues/13
-        # remove ----------
-        if hour_id in (3,15,20):
-            day += hour_cell.format(hour_id=hour_id,
-                                    task_name='test_{}'.format(hour_id))
-        else:
-            day += hour_cell_free.format(hour_id=hour_id)
-        # -----------------
-    return day
-
-
-def gen_weeks(year_id, month_id, tasks):
-    week = copy(week_table)
-    month = ''
-
-    day_of_week = 1
-    d_index = 1
-
-    number_of_d = date_template[str(year_id)][str(month_id)]['days']
-    first_d = date_template[str(year_id)][str(month_id)]['first_day']
-    # ToDo add switch to previous and next month / year
-    if month_id == 1:
-        prev_month = date_template[str(year_id - 1)]['12']['days'] - \
-                     first_d + 2
-    else:
-        prev_month = date_template[str(year_id)][str(month_id - 1)]['days'] - \
-                     first_d + 2
-
-    # form previous month
-    while first_d > day_of_week:
-        week = week.replace('{{d_{}}}'.format(day_of_week),
-                            day_cell_another_month.format(day_id=prev_month))
-        prev_month += 1
-        day_of_week += 1
-
-    # form previous month
-    while d_index < number_of_d + 1:
-        # ToDo(den) add logic
-        # https://github.com/stasya72008/highway-to-hell/issues/13
-        # remove --------------
-        if d_index not in (3, 15, 20):
-            day = day_cell_free.format(year_id=year_id,
-                                       month_id=month_id,
-                                       day_id=d_index)
-        else:
-            day = day_cell.format(year_id=year_id,
-                                  month_id=month_id,
-                                  day_id=d_index,
-                                  task_count='3')
-
-        week = week.replace('{{d_{}}}'.format(day_of_week), day)
-        # -------------------
-
-        d_index += 1
-        if day_of_week % 7 == 0:
-            month = '{}{}'.format(month, week)
-            week = copy(week_table)
-            day_of_week = 0
-        day_of_week += 1
-
-    # form next month
-    d_index = 1
-    while day_of_week < 8:
-        week = week.replace('{{d_{}}}'.format(day_of_week),
-                            day_cell_another_month.format(day_id=d_index))
-        d_index += 1
-        day_of_week += 1
-
-    month = '{}{}'.format(month, week)
-    return month
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
