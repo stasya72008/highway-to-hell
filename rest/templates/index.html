@@ -5,9 +5,11 @@
     <title>Highway to hell</title>
 </head>
 <body>
-    <h2>Hello, {{ users.username }}!</h2>
+    {% for user in users %}
+    <h2>Hello, {{ user.username }}!</h2>
+    {% endfor %}
 
-    {% for task in tasks.data %}
+    {% for task in tasks %}
     <div><p>{{ task.date }}: <b>{{ task.name }}</b></p></div>
     <div><p> ... </p></div>
     {% endfor %}
