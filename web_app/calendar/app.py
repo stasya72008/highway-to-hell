@@ -1,11 +1,34 @@
 import copy
-from flask import Flask
+from flask import Flask, request, redirect
 
 from helpers import gen_hours, gen_weeks, date_template
 from html_template import *
 
-
 app = Flask(__name__)
+
+
+@app.route(task_preset_link)
+@app.route(task_preset_link + '/')
+def get_form():
+    args = dict(request.args)
+    form = task_preset_form.format(redirect=args.get('redirect')[0],
+                                   year=args.get('y')[0],
+                                   month=args.get('m')[0],
+                                   day=args.get('d')[0],
+                                   hour=args.get('h')[0])
+    return form
+
+
+@app.route(task_creator_link, methods=['post'])
+def set_form():
+    print dict(request.form)
+    args = dict(request.args)
+
+    redirect_to_url = args.get('redirect', [task_preset_link])[0]
+    # print request.form
+    # resp = create_task(user_id='1', task_name=request.form.get('title')[0], date=None)
+
+    return redirect(redirect_to_url)
 
 
 @app.route(years_route)
@@ -26,12 +49,12 @@ def get_months_page_for_year(year_id):
         # https://github.com/stasya72008/highway-to-hell/issues/13
         # remove -----------
         if m_index not in (1, 3, 9):
-            m_cell = month_cell_free.format(year_id=year_id,
-                                            month_id=m_index,
+            m_cell = month_cell_free.format(year=year_id,
+                                            month=m_index,
                                             month_name=month_name)
         else:
-            m_cell = month_cell.format(year_id=year_id,
-                                       month_id=m_index,
+            m_cell = month_cell.format(year=year_id,
+                                       month=m_index,
                                        month_name=month_name,
                                        task_count='3')
         # ------------------
@@ -47,9 +70,9 @@ def get_months_page_for_year(year_id):
         prev_year_id = year_id - 1
         next_year_id = year_id + 1
 
-    month = month.format(year_id=year_id,
-                         prev_year_id=prev_year_id,
-                         next_year_id=next_year_id)
+    month = month.format(year=year_id,
+                         prev_year=prev_year_id,
+                         next_year=next_year_id)
 
     return body_html.format(month)
 
@@ -69,10 +92,10 @@ def get_days_page_for_month(year_id, month_id):
     next_month_name = date_template[str(year_id)][str(next_month_id)]['name']
     month_name = date_template[str(year_id)][str(month_id)]['name']
 
-    day = day_table.format(year_id=year_id,
+    day = day_table.format(year=year_id,
                            month_name=month_name,
-                           prev_m_id=prev_month_id,
-                           next_m_id=next_month_id,
+                           prev_m=prev_month_id,
+                           next_m=next_month_id,
                            prev_m_name=prev_month_name,
                            next_m_name=next_month_name,
                            weeks=gen_weeks(year_id, month_id, {}))
@@ -82,6 +105,8 @@ def get_days_page_for_month(year_id, month_id):
 @app.route(hours_route)
 @app.route(hours_route + '/')
 def get_hours_page_for_day(year_id, month_id, day_id):
+    base_url = request.base_url
+
     # ToDo(den) add logic
     # https://github.com/stasya72008/highway-to-hell/issues/13
     # tasks = get_task_for_rest()
@@ -98,12 +123,16 @@ def get_hours_page_for_day(year_id, month_id, day_id):
         prev_day_id = day_id - 1
         next_day_id = day_id + 1
 
-    hour = hour_table.format(year_id=year_id,
-                             month_id=month_id,
-                             day_id=day_id,
-                             prev_day_id=prev_day_id,
-                             next_day_id=next_day_id,
-                             hours=gen_hours(tasks))
+    hour = hour_table.format(year=year_id,
+                             month=month_id,
+                             day=day_id,
+                             prev_day=prev_day_id,
+                             next_day=next_day_id,
+                             hours=gen_hours(year_id,
+                                             month_id,
+                                             day_id,
+                                             base_url,
+                                             tasks))
     return body_html.format(hour)
 
 
