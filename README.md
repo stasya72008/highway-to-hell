@@ -35,7 +35,11 @@ Task
 "status": string
 }
 ```
-
+Task Status:
+- active
+- done
+- archive
+- deleted
 
 **REST**
 
