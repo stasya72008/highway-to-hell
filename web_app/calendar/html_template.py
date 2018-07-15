@@ -74,6 +74,36 @@ hour_table = '''
     </table>
 '''.format(days_link=days_link)
 
+# ToDo(den) add links for done, edit, delete ...
+# ToDo(den) add styles ...
+t_table_inner = '''
+    <table bgcolor="#eee" 
+     style="height: 100%; width: 100%; border: 1px solid white; 
+     border-collapse: collapse; border-spacing: 0; padding: 0px;">
+        {tasks}
+    </table>
+'''
+t_cell_inner = '''
+<tr><th><a href="{base_url}" title="Close/Reopen">{{task_name}}
+</a></th>
+
+    <th width=30><a href="{base_url}">
+<img src="/static/done.png" alt="done" title="Close/Reopen" style="width:20px;height:20px;">
+</a></th>
+ 
+    <th width=30><a href="{base_url}">
+<img src="/static/edit.png" alt="edit" title="Edit" style="width:20px;height:20px;">
+</a></th> 
+
+    <th width=30><a href="{base_url}">
+<img src="/static/archive.png" alt="archive" title="To Archive" style="width:20px;height:20px;">
+</a></th>
+
+    <th width=30><a href="{base_url}">
+<img src="/static/delete.png" alt="delete" title="Delete" style="width:20px;height:20px;">
+</a></th></tr>
+'''.format(base_url=years_route)
+
 # ==================== DAY ===============
 # bgcolor: #eee - busy, #aaa - Day zero (from another month)
 # year (months_link)

@@ -11,10 +11,60 @@ user_tasks = base_url + 'users/{user_id}/tasks'
 task_url = base_url + 'tasks/{task_id}'
 tasks_url = base_url + 'tasks'
 
+tasks = [
+    {
+        "user_id": 1,
+        "id": 1,
+        "name": "Livin' 1",
+        "date": "today",
+        "status": "active",
+        "calendar_date": "2018|1|1|0"
+    },
+    {
+        "user_id": 1,
+        "id": 2,
+        "name": "Livin' 2",
+        "date": "today",
+        "status": "active",
+        "calendar_date": "2018|1|1|0"
+    },
+    {
+        "user_id": 1,
+        "id": 3,
+        "name": "Livin' 3",
+        "date": "today",
+        "status": "delete",
+        "calendar_date": "2018|1|1|0"
+    },
+    {
+        "user_id": 1,
+        "id": 33,
+        "name": "Livin' 33",
+        "date": "today",
+        "status": "done",
+        "calendar_date": "2018|1|1|3"
+    },
+    {
+        "user_id": 1,
+        "id": 4,
+        "name": "Livin' 4",
+        "date": "today",
+        "status": "done",
+        "calendar_date": "2018|1|2|0"
+    },
+    {
+        "user_id": 1,
+        "id": 5,
+        "name": "Livin' 5",
+        "date": "today",
+        "status": "active",
+        "calendar_date": "2018|2|2|0"
+    }
+]
 
 def get_all_user_tasks(user_id):
-    resp = requests.get(user_tasks.format(user_id=user_id))
-    return json.loads(resp.text)
+    # resp = requests.get(user_tasks.format(user_id=user_id))
+    return tasks
 
 
 def get_task_by_id(task_id):
