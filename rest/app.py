@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from os import path
 import json
+import config
 
 from flask import request
 
@@ -16,6 +17,8 @@ with open(users_data, 'r') as f:
 
 with open(tasks_data, 'r') as f:
     tasks = json.loads(f.read())
+
+config = config.RestConfig()
 
 
 @app.route('/')
@@ -113,6 +116,4 @@ def not_found(error):
 
 
 if __name__ == '__main__':
-    # ToDo(stasya) move port to config after adding config
-    # https://github.com/stasya72008/highway-to-hell/projects/2#card-11155636
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host=config.host, port=config.port, debug=config.debug)
