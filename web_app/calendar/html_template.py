@@ -1,7 +1,6 @@
 from calendar_routes import *
 
 # ================ HTML ========================
-# redirect
 # year, month, day, hour
 task_preset_form = '''
 <html>
@@ -14,7 +13,7 @@ task_preset_form = '''
     <style type="text/css">#hidden {{{{display: block;}}}}</style>
  </head>
  <body>
-  <form action="{task_creator_link}?redirect={{redirect}}" method="post">
+  <form action="{task_creator_link}" method="post">
    <p><textarea name="task_name" rows="3" style="width:345px;"></textarea></p>
    <p><label for="calendar">Calendar Date</label><input type="checkbox" id="calendar" name="calendar" onChange="changeButtonState(this)" checked></p>
    <div id="hidden"> 
@@ -35,10 +34,9 @@ body_html = '''
                </head><body>{}</body></html>'''
 
 # ================ HOUR ========================
-# redirect
 # year, month, day, hour
 cell_add_task_link = '''
-<a href="{task_preset_link}?y={{year}}&m={{month}}&d={{day}}&h={{hour}}&redirect={{redirect}}"> 
+<a href="{task_preset_link}?y={{year}}&m={{month}}&d={{day}}&h={{hour}}"> 
 <img src="/static/plus.png" alt="Create Task" style="width:20px;height:20px;"></a>
 '''.format(task_preset_link=task_preset_link)
 

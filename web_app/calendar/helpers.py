@@ -8,14 +8,13 @@ with open('date_template.json', 'r') as f:
     date_template = json.loads(f.read())
 
 
-def gen_hours(year, month, day, redirect, tasks):
+def gen_hours(year, month, day, tasks):
     day_line = ''
     for h_index in range(0, 24):
         cell = cell_add_task_link.format(year=year,
                                          month=month,
                                          day=day,
-                                         hour=h_index,
-                                         redirect=redirect)
+                                         hour=h_index)
         # ToDo(den) add logic
         # https://github.com/stasya72008/highway-to-hell/issues/13
         # remove ----------
