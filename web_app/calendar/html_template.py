@@ -1,47 +1,74 @@
 from calendar_routes import *
 
-
 # ================ HTML ========================
+# year, month, day, hour
+task_preset_form = '''
+<html>
+ <head>
+    <meta charset="utf-8"><title>Create task</title>
+    <script>
+        function changeButtonState(checkbox) {{{{
+            document.getElementById('hidden').style.display = checkbox.checked ? 'block': 'none';}}}}
+    </script>
+    <style type="text/css">#hidden {{{{display: block;}}}}</style>
+ </head>
+ <body>
+  <form action="{task_creator_link}" method="post">
+   <p><textarea name="task_name" rows="3" style="width:345px;"></textarea></p>
+   <p><label for="calendar">Calendar Date</label><input type="checkbox" id="calendar" name="calendar" onChange="changeButtonState(this)" checked></p>
+   <div id="hidden"> 
+       Year: <input name="year" style="width:40px;" value="{{year}}"> 
+       Month: <input name="month" style="width:40px;" value="{{month}}"> 
+       Day: <input name="day" style="width:40px;" value="{{day}}"> 
+       Hour: <input  name="hour" style="width:40px;" value="{{hour}}"></div>
+   <p><input type="submit" value="Add"></p>
+ </form></body></html>
+'''.format(task_creator_link=task_creator_link)
 
-body_html = '''<html><head>
-                <style>
+body_html = '''
+<!DOCTYPE HTML>
+<html><head><style>
                    table, th, td {{border: 1px solid black; collapse;}}
                    a {{text-decoration: none; color: black; background-color: while; }}
                 </style>
                </head><body>{}</body></html>'''
 
 # ================ HOUR ========================
-# ToDO(den) change (add) to button "Create task"
+# year, month, day, hour
+cell_add_task_link = '''
+<a href="{task_preset_link}?y={{year}}&m={{month}}&d={{day}}&h={{hour}}"> 
+<img src="/static/plus.png" alt="Create Task" style="width:20px;height:20px;"></a>
+'''.format(task_preset_link=task_preset_link)
+
 # bgcolor: #eee - busy
-# hour_id
+# hour
 # task_name
-# (add) action for task creation
+# cell_add_task_link
 hour_cell_free = '''
 <tr>
-    <th width=60 bgcolor="#ffffff">{hour_id}</th>
-    <th bgcolor="#ffffff" colspan="3"> </th>
-    <th width=60 bgcolor="#ffffff">(add)</th>
+    <th width=60>{hour}</th>
+    <th colspan="3"> </th>
+    <th width=60>{cell_add_task_link}</th>
 </tr>'''
 hour_cell = '''
-<tr>
-        <th width=60 bgcolor="#eee">{hour_id}</th>
-        <th bgcolor="#ffffff" colspan="3">{task_name}</th>
-        <th width=60 bgcolor="#ffffff">(add)</th>
+<tr bgcolor="#eee">
+        <th width=60>{hour}</th>
+        <th colspan="3">{task_name}</th>
+        <th width=60>{cell_add_task_link}</th>
 </tr>'''
 
-# year_id (days_link)
-# month_id (days_link)
-# day_id
-# hours
-# prev_day_id, next_day_id
+
+# year, month (days_link)
+# day, hours
+# prev_day, next_day
 # ToDo add switch to previous and next month
 # ToDo(den) move title with previous and next (month, year, day) to out
 hour_table = '''
     <table style="width:50%">
         <tr>
-            <th colspan="2"><a href="{days_link}/{{prev_day_id}}/hours">({{prev_day_id}})</a></th>
-            <th><a href="{days_link}">^ {{day_id}} ^</a></th>
-            <th colspan="2"><a href="{days_link}/{{next_day_id}}/hours">({{next_day_id}})</a></th>
+            <th colspan="2"><a href="{days_link}/{{prev_day}}/hours">({{prev_day}})</a></th>
+            <th><a href="{days_link}">^ {{day}} ^</a></th>
+            <th colspan="2"><a href="{days_link}/{{next_day}}/hours">({{next_day}})</a></th>
         </tr>
         <tr>{{hours}}</tr>
     </table>
@@ -49,35 +76,32 @@ hour_table = '''
 
 # ==================== DAY ===============
 # bgcolor: #eee - busy, #aaa - Day zero (from another month)
-# year_id (months_link)
-# prev_m_id, prev_m_name - previous month
-# next_m_id, next_m_name - next month
+# year (months_link)
+# prev_m, prev_m_name - previous month
+# next_m, next_m_name - next month
 # weeks
 # ToDo(den) move title with previous and next (month, year, day) to out
 day_table = '''
     <table style="width:50%">
         <tr>
-            <th colspan="2"><a href="{months_link}/{{prev_m_id}}/days">({{prev_m_name}})</a></th>
+            <th colspan="2"><a href="{months_link}/{{prev_m}}/days">({{prev_m_name}})</a></th>
             <th colspan="3"><a href="{months_link}">^ {{month_name}} ^</a></th>
-            <th colspan="2"><a href="{months_link}/{{next_m_id}}/days">({{next_m_name}})</a></th>
+            <th colspan="2"><a href="{months_link}/{{next_m}}/days">({{next_m_name}})</a></th>
         </tr>
         {{weeks}}
     </table>
 '''.format(months_link=months_link)
 
-# day_id
-day_cell_another_month = '<th width=50 bgcolor="#aaa">{day_id}</th>'
+# day
+day_cell_another_month = '<th width=50 bgcolor="#aaa">{day}</th>'
 
-# task_count: int
-# year_id (hours_link)
-# month_id (hours_link)
-# day_id (hours_link)
 # task_count
+# year, month, day (hours_link)
 day_cell = '''
-<th width=50 bgcolor="#eee"> <a href="{hours_link}">{{day_id}} ({{task_count}})</a>
+<th width=50 bgcolor="#eee"> <a href="{hours_link}" bgcolor="#eee">{{day}} ({{task_count}})</a>
 </th>'''.format(hours_link=hours_link)
 day_cell_free = '''
-<th width=50 > <a href="{hours_link}">{{day_id}}</a></th>
+<th width=50 > <a href="{hours_link}">{{day}}</a></th>
 '''.format(hours_link=hours_link)
 
 # ================ WEEK ========================
@@ -87,24 +111,24 @@ week_table = ' <tr> [d_1] [d_2] [d_3] [d_4] [d_5] [d_6] [d_7] </tr>'
 # ================ MONTH ========================
 # ToDo(den) move title with previous and next (month, year, day) to out
 # bgcolor: #eee - busy
-# year_id (months_link)
-# month_id month_name
+# year (months_link)
+# month month_name
 # task_count
 month_cell_free = '''
-<th><a href="{months_link}/{{month_id}}/days">{{month_name}}</a></th>
+<th><a href="{months_link}/{{month}}/days">{{month_name}}</a></th>
 '''.format(months_link=months_link)
 month_cell = '''
-<th bgcolor="#eee"><a href="{months_link}/{{month_id}}/days">{{month_name}} ({{task_count}})</a></th>
+<th bgcolor="#eee"><a href="{months_link}/{{month}}/days">{{month_name}} ({{task_count}})</a></th>
 '''.format(months_link=months_link)
 
-# year_id (months_link)
-# prev_year_id next_year_id
+# year
+# prev_year, next_year
 month_table = '''
     <table style="width:50%">
         <tr>
-            <th><a href="{years_route}/{{prev_year_id}}/months"> ({{prev_year_id}}) </a></th>
-            <th><a href="{years_route}">^ {{year_id}} ^</a></th>
-            <th><a href="{years_route}/{{next_year_id}}/months"> ({{next_year_id}}) </a></th>
+            <th><a href="{years_route}/{{prev_year}}/months"> ({{prev_year}}) </a></th>
+            <th><a href="{years_route}">^ {{year}} ^</a></th>
+            <th><a href="{years_route}/{{next_year}}/months"> ({{next_year}}) </a></th>
         </tr>
         <tr> [m_1]  [m_2]  [m_3] </tr>
         <tr> [m_4]  [m_5]  [m_6] </tr>

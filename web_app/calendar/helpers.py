@@ -8,43 +8,49 @@ with open('date_template.json', 'r') as f:
     date_template = json.loads(f.read())
 
 
-def gen_hours(tasks):
-    day = ''
-    for hour_id in range(0, 24):
+def gen_hours(year, month, day, tasks):
+    day_line = ''
+    for h_index in range(0, 24):
+        cell = cell_add_task_link.format(year=year,
+                                         month=month,
+                                         day=day,
+                                         hour=h_index)
         # ToDo(den) add logic
         # https://github.com/stasya72008/highway-to-hell/issues/13
         # remove ----------
-        if hour_id in (3,15,20):
-            day += hour_cell.format(hour_id=hour_id,
-                                    task_name='test_{}'.format(hour_id))
+        if h_index in (3,15,20):
+            day_line += hour_cell.format(hour=h_index,
+                                         task_name='test_{}'.format(h_index),
+                                         cell_add_task_link=cell)
         else:
-            day += hour_cell_free.format(hour_id=hour_id)
+            day_line += hour_cell_free.format(hour=h_index,
+                                              cell_add_task_link=cell)
         # -----------------
-    return day
+    return day_line
 
 
-def gen_weeks(year_id, month_id, tasks):
+def gen_weeks(year, month, tasks):
     week = copy(week_table)
-    month = ''
+    month_line = ''
 
     day_of_week = 1
     d_index = 1
 
-    number_of_d = date_template[str(year_id)][str(month_id)]['days']
-    first_d = date_template[str(year_id)][str(month_id)]['first_day']
+    number_of_d = date_template[str(year)][str(month)]['days']
+    first_d = date_template[str(year)][str(month)]['first_day']
     # ToDo add switch to previous and next month / year
-    if month_id == 1:
-        prev_month = date_template[str(year_id - 1)]['12']['days'] - \
+    if month == 1:
+        prev_month_days = date_template[str(year - 1)]['12']['days'] - \
                      first_d + 2
     else:
-        prev_month = date_template[str(year_id)][str(month_id - 1)]['days'] - \
-                     first_d + 2
+        prev_month_days = date_template[str(year)][str(
+            month - 1)]['days'] - first_d + 2
 
     # form previous month
     while first_d > day_of_week:
         week = week.replace('[d_{}]'.format(day_of_week),
-                            day_cell_another_month.format(day_id=prev_month))
-        prev_month += 1
+                            day_cell_another_month.format(day=prev_month_days))
+        prev_month_days += 1
         day_of_week += 1
 
     # form previous month
@@ -53,13 +59,13 @@ def gen_weeks(year_id, month_id, tasks):
         # https://github.com/stasya72008/highway-to-hell/issues/13
         # remove --------------
         if d_index not in (3, 15, 20):
-            day = day_cell_free.format(year_id=year_id,
-                                       month_id=month_id,
-                                       day_id=d_index)
+            day = day_cell_free.format(year=year,
+                                       month=month,
+                                       day=d_index)
         else:
-            day = day_cell.format(year_id=year_id,
-                                  month_id=month_id,
-                                  day_id=d_index,
+            day = day_cell.format(year=year,
+                                  month=month,
+                                  day=d_index,
                                   task_count='3')
 
         week = week.replace('[d_{}]'.format(day_of_week), day)
@@ -67,7 +73,7 @@ def gen_weeks(year_id, month_id, tasks):
 
         d_index += 1
         if day_of_week % 7 == 0:
-            month = '{}{}'.format(month, week)
+            month_line = '{}{}'.format(month_line, week)
             week = copy(week_table)
             day_of_week = 0
         day_of_week += 1
@@ -76,9 +82,9 @@ def gen_weeks(year_id, month_id, tasks):
     d_index = 1
     while day_of_week < 8:
         week = week.replace('[d_{}]'.format(day_of_week),
-                            day_cell_another_month.format(day_id=d_index))
+                            day_cell_another_month.format(day=d_index))
         d_index += 1
         day_of_week += 1
 
-    month = '{}{}'.format(month, week)
-    return month
+    month_line = '{}{}'.format(month_line, week)
+    return month_line
