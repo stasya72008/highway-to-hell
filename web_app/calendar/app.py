@@ -7,39 +7,41 @@ from html_template import *
 app = Flask(__name__)
 
 
-@app.route(task_preset_link)
-@app.route(task_preset_link + '/')
+@app.route(task_preset_link, methods=['get'])
+@app.route(task_preset_link + '/', methods=['get'])
 def get_form():
     args = dict(request.args)
-    form = task_preset_form.format(redirect=args.get('redirect')[0],
-                                   year=args.get('y')[0],
-                                   month=args.get('m')[0],
-                                   day=args.get('d')[0],
-                                   hour=args.get('h')[0])
+    # Todo(add current date for default)
+    form = task_preset_form.format(redirect=args.get('redirect',
+                                                     [task_preset_link])[0],
+                                   year=args.get('y', [2018])[0],
+                                   month=args.get('m', [1])[0],
+                                   day=args.get('d', [1])[0],
+                                   hour=args.get('h', [1])[0])
     return form
 
 
 @app.route(task_creator_link, methods=['post'])
 def set_form():
-    print dict(request.form)
-    args = dict(request.args)
 
+    args = dict(request.args)
     redirect_to_url = args.get('redirect', [task_preset_link])[0]
-    # print request.form
-    # resp = create_task(user_id='1', task_name=request.form.get('title')[0], date=None)
+
+    # resp = create_task(user_id='1',
+    # task_name=request.form.get('title')[0], date=None)
 
     return redirect(redirect_to_url)
 
 
-@app.route(years_route)
-@app.route(years_route + '/')
+@app.route(years_route, methods=['get'])
+@app.route(years_route + '/', methods=['get'])
 def get_years_page():
     # ToDo Get years from date_template and form page
     return body_html.format(year_table)
 
 
-@app.route(months_route)
-@app.route(months_route + '/')
+@app.route(months_route, methods=['get'])
+@app.route(months_route + '/', methods=['get'])
 def get_months_page_for_year(year_id):
     month = copy.copy(month_table)
     for m_index in range(1, 13):
@@ -77,8 +79,8 @@ def get_months_page_for_year(year_id):
     return body_html.format(month)
 
 
-@app.route(days_route)
-@app.route(days_route + '/')
+@app.route(days_route, methods=['get'])
+@app.route(days_route + '/', methods=['get'])
 def get_days_page_for_month(year_id, month_id):
     # ToDo(den) add logic
     # https://github.com/stasya72008/highway-to-hell/issues/13
@@ -102,8 +104,8 @@ def get_days_page_for_month(year_id, month_id):
     return body_html.format(day)
 
 
-@app.route(hours_route)
-@app.route(hours_route + '/')
+@app.route(hours_route, methods=['get'])
+@app.route(hours_route + '/', methods=['get'])
 def get_hours_page_for_day(year_id, month_id, day_id):
     base_url = request.base_url
 
