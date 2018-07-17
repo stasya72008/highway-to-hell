@@ -55,9 +55,9 @@ def page_of_months(year_id):
         prev_year_id = year_id - 1
         next_year_id = year_id + 1
 
-    full_year = gen_year_cell(year_id).format(year_id=year_id,
-                                              prev_year_id=prev_year_id,
-                                              next_year_id=next_year_id)
+    full_year = gen_year_cell(year_id).format(year=year_id,
+                                              prev_year=prev_year_id,
+                                              next_year=next_year_id)
 
     return body_html.format(full_year)
 
@@ -74,10 +74,10 @@ def page_of_days(year_id, month_id):
     next_month_name = date_template[str(year_id)][str(next_month_id)]['name']
     month_name = date_template[str(year_id)][str(month_id)]['name']
 
-    full_month = day_table.format(year_id=year_id,
+    full_month = day_table.format(year=year_id,
                                   month_name=month_name,
-                                  prev_m_id=prev_month_id,
-                                  next_m_id=next_month_id,
+                                  prev_m=prev_month_id,
+                                  next_m=next_month_id,
                                   prev_m_name=prev_month_name,
                                   next_m_name=next_month_name,
                                   weeks=gen_month_cell(year_id, month_id))
@@ -87,6 +87,8 @@ def page_of_days(year_id, month_id):
 @app.route(hours_route + '/', methods=['get'])
 @app.route(hours_route, methods=['get'])
 def page_of_hours(year_id, month_id, day_id):
+    global global_url_for_redirect
+    global_url_for_redirect = request.base_url
 
     if day_id == 1:
         # ToDo add switch to previous and next month / year
@@ -99,11 +101,11 @@ def page_of_hours(year_id, month_id, day_id):
         prev_day_id = day_id - 1
         next_day_id = day_id + 1
 
-    full_day = hour_table.format(year_id=year_id,
-                                 month_id=month_id,
-                                 day_id=day_id,
-                                 prev_day_id=prev_day_id,
-                                 next_day_id=next_day_id,
+    full_day = hour_table.format(year=year_id,
+                                 month=month_id,
+                                 day=day_id,
+                                 prev_day=prev_day_id,
+                                 next_day=next_day_id,
                                  hours=gen_day_cell(year_id, month_id, day_id))
     return body_html.format(full_day)
 
