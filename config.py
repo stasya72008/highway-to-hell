@@ -2,10 +2,10 @@ import configparser
 from os import path
 
 
-class Config:
+class Config(object):
     def __init__(self, section):
         self._parser = configparser.RawConfigParser()
-        self._config_file = path.join(path.dirname(file), 'config.ini')
+        self._config_file = path.join(path.dirname(__file__), 'config.ini')
         self._section = ''
         try:
             self._parser.read(self._config_file)
