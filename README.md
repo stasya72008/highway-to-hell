@@ -32,10 +32,15 @@ Task
 "user_id": int,
 "name": string,
 "date": ?
-"status": string
+"status": string,
+"calendar_date": string
 }
 ```
-
+Task Status:
+- active
+- done
+- archive
+- deleted
 
 **REST**
 

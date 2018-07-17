@@ -1,10 +1,13 @@
 import copy
 from flask import Flask, request, redirect
 
+import config
 from helpers import gen_hours, gen_weeks, date_template
 from html_template import *
 
 app = Flask(__name__)
+
+config = config.CalendarConfig()
 
 global_url_for_redirect = task_preset_link
 
@@ -138,4 +141,4 @@ def get_hours_page_for_day(year_id, month_id, day_id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host=config.host, port=config.port, debug=config.debug)

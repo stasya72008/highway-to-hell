@@ -1,11 +1,12 @@
 import requests
 import json
 
+import config
 import data.data_templates as template
 
-# ToDo(stasya) Move base_url to config after
-# https://github.com/stasya72008/highway-to-hell/projects/2#card-11155636
-base_url = 'http://localhost:5000/'
+conf = config.RestConfig()
+
+base_url = 'http://{host}:{port}/'.format(host=conf.host, port=conf.port)
 user_tasks = base_url + 'users/{user_id}/tasks'
 task_url = base_url + 'tasks/{task_id}'
 tasks_url = base_url + 'tasks'
