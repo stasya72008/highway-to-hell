@@ -3,6 +3,7 @@ import config
 
 from helpers import date_template, gen_day_cell, gen_month_cell, gen_year_cell
 from html_template import *
+from web_app.rest_client.tasks import create_task
 
 app = Flask(__name__)
 
@@ -25,12 +26,20 @@ def get_form():
 
 @app.route(task_creator_link, methods=['post'])
 def set_form():
-    # resp = create_task(user_id='1',
-    # task_name=request.form.get('title')[0], date=None)
+    calendar_date = '|'.join([request.form.get('year'),
+                              request.form.get('month'),
+                              request.form.get('day'),
+                              request.form.get('hour')])
 
+    create_task(user_id=1,
+                task_name=request.form.get('task_name'),
+                date='',
+                calendar_date=calendar_date)
+    # ToDo(den) check return satus
     global global_url_for_redirect
     url_for_redirect = global_url_for_redirect
     global_url_for_redirect = task_preset_link
+
     return redirect(url_for_redirect)
 
 
