@@ -71,3 +71,24 @@ class CalendarConfig(Config):
     @property
     def debug(self):
         return self.get_property('debug')
+
+
+class DBConfig(Config):
+    def __init__(self):
+        super(DBConfig, self).__init__('database')
+
+    @property
+    def host(self):
+        return self.get_property('host')
+
+    @property
+    def port(self):
+        return self.get_property('port')
+
+    @property
+    def user(self):
+        return self.get_property('user')
+
+    @property
+    def password(self):
+        return self.get_property('pass')
