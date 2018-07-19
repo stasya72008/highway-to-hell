@@ -14,7 +14,7 @@ task_preset_form = '''
  </head>
  <body>
   <form action="{task_creator_link}" method="post">
-   <p><textarea name="task_name" rows="3" style="width:345px;"></textarea></p>
+   <p><textarea name="task_title" rows="3" style="width:345px;"></textarea></p>
    <p><label for="calendar">Calendar Date</label><input type="checkbox" id="calendar" name="calendar" onChange="changeButtonState(this)" checked></p>
    <div id="hidden"> 
        Year: <input name="year" style="width:40px;" value="{{year}}"> 

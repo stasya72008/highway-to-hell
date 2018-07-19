@@ -29,7 +29,7 @@ def get_tasks_for_period(user_id, start, end):
     return json.loads(resp.text)
 
 
-def create_task(user_id, task_name, calendar_date):
+def create_task(user_id, task_name, calendar_date=''):
     task = template.task
     # ToDo(den) move user_id to init class rest_client after
     # https://github.com/stasya72008/highway-to-hell/projects/2#card-11180275

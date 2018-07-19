@@ -26,15 +26,19 @@ def get_form():
 
 @app.route(task_creator_link, methods=['post'])
 def set_form():
-    calendar_date = '|'.join([request.form.get('year'),
-                              request.form.get('month'),
-                              request.form.get('day'),
-                              request.form.get('hour')])
+    if request.form.get('calendar') == 'on':
+        calendar_date = '|'.join([request.form.get('year'),
+                                  request.form.get('month'),
+                                  request.form.get('day'),
+                                  request.form.get('hour')])
+    else:
+        calendar_date = ''
 
     create_task(user_id=1,
-                task_name=request.form.get('task_name'),
+                task_name=request.form.get('task_title'),
                 calendar_date=calendar_date)
-    # ToDo(den) check return satus
+    # ToDo(den) check return status
+    # ToDo(den) remove global ++)
     global global_url_for_redirect
     url_for_redirect = global_url_for_redirect
     global_url_for_redirect = task_preset_link
