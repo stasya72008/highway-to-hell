@@ -1,4 +1,7 @@
 from calendar_routes import *
+import datetime
+c_date = datetime.datetime.now()
+
 
 # ================ HTML ========================
 # year, month, day, hour
@@ -25,13 +28,42 @@ task_preset_form = '''
  </form></body></html>
 '''.format(task_creator_link=task_creator_link)
 
+title_table = '''
+<table style="width:50%">
+ <tr>
+  <th><a href="">Daily</a></th>
+  <th bgcolor="#aaa">Calendar</th>
+  <th><a href="{years_route}">.../years</a></th>
+  <th><a href="{months_link}">.../months</a></th>
+  <th><a href="{days_link}">.../days</a></th>
+  <th><a href="{hours_link}">.../today</a></th>
+  <th><a href="{task_preset_link}?y={{year}}&m={{month}}&d={{day}}&h={{hour}}"> 
+    <img src="/static/plus.png" alt="Create Task" style="width:20px;height:20px;"></a>
+   </th>
+ </tr>
+</table>
+<p></p>
+'''.format(years_route=years_route,
+           months_link=months_link,
+           days_link=days_link,
+           hours_link=hours_link,
+           task_preset_link=task_preset_link)
+
+title_table = title_table.format(year=c_date.year,
+                                 month=c_date.month,
+                                 day=c_date.day,
+                                 hour=c_date.hour)
+
 body_html = '''
 <!DOCTYPE HTML>
 <html><head><style>
                    table, th, td {{border: 1px solid black; collapse;}}
                    a {{text-decoration: none; color: black; }}
                 </style>
-               </head><body>{}</body></html>'''
+               </head><body>[title_table]{}</body></html>'''
+
+body_html = body_html.replace('[title_table]', title_table)
+
 
 # ================ HOUR ========================
 # year, month, day, hour
@@ -84,25 +116,24 @@ t_table_inner = '''
     </table>
 '''
 t_cell_inner = '''
-<tr><th><a href="{base_url}" title="Close/Reopen">{{task_name}}
-</a></th>
+<tr><th><a href="" title="Close/Reopen">{task_name}</a></th>
 
-    <th width=30><a href="{base_url}">
+    <th width=30><a href="">
 <img src="/static/done.png" alt="done" title="Close/Reopen" style="width:20px;height:20px;">
 </a></th>
  
-    <th width=30><a href="{base_url}">
+    <th width=30><a href="">
 <img src="/static/edit.png" alt="edit" title="Edit" style="width:20px;height:20px;">
 </a></th> 
 
-    <th width=30><a href="{base_url}">
+    <th width=30><a href="">
 <img src="/static/archive.png" alt="archive" title="To Archive" style="width:20px;height:20px;">
 </a></th>
 
-    <th width=30><a href="{base_url}">
+    <th width=30><a href="">
 <img src="/static/delete.png" alt="delete" title="Delete" style="width:20px;height:20px;">
 </a></th></tr>
-'''.format(base_url=years_route)
+'''
 
 # ==================== DAY ===============
 # bgcolor: ##00ee7a - busy, #aaa - Day zero (from another month)
