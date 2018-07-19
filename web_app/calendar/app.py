@@ -3,7 +3,7 @@ import config
 
 from helpers import date_template, gen_day_cell, gen_month_cell, gen_year_cell
 from html_template import *
-from web_app.rest_client.tasks import create_task
+from web_app.rest_client.client import create_task
 
 app = Flask(__name__)
 
@@ -33,7 +33,6 @@ def set_form():
 
     create_task(user_id=1,
                 task_name=request.form.get('task_name'),
-                date='',
                 calendar_date=calendar_date)
     # ToDo(den) check return satus
     global global_url_for_redirect
