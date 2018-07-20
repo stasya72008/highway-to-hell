@@ -1,6 +1,7 @@
 from calendar_routes import *
 import datetime
-c_date = datetime.datetime.now()
+
+_today = datetime.datetime.now()
 
 
 # ================ HTML ========================
@@ -33,12 +34,11 @@ title_table = '''
  <tr>
   <th><a href="">Daily</a></th>
   <th bgcolor="#aaa">Calendar</th>
-  <th><a href="{years_route}">.../years</a></th>
-  <th><a href="{months_link}">.../months</a></th>
-  <th><a href="{days_link}">.../days</a></th>
-  <th><a href="{hours_link}">.../today</a></th>
+  <th><a href="{hours_link}">Today</a></th>
+  <th><a href="{days_link}">Days</a></th>
+  <th><a href="{months_link}">Months</a></th>
   <th><a href="{task_preset_link}?y={{year}}&m={{month}}&d={{day}}&h={{hour}}"> 
-    <img src="/static/plus.png" alt="Create Task" style="width:20px;height:20px;"></a>
+    <img src="/static/plus.png" alt="Create Task" title="Add" style="width:20px;height:20px;"></a>
    </th>
  </tr>
 </table>
@@ -49,10 +49,10 @@ title_table = '''
            hours_link=hours_link,
            task_preset_link=task_preset_link)
 
-title_table = title_table.format(year=c_date.year,
-                                 month=c_date.month,
-                                 day=c_date.day,
-                                 hour=c_date.hour)
+title_table = title_table.format(year=_today.year,
+                                 month=_today.month,
+                                 day=_today.day,
+                                 hour=_today.hour)
 
 body_html = '''
 <!DOCTYPE HTML>
@@ -69,10 +69,10 @@ body_html = body_html.replace('[title_table]', title_table)
 # year, month, day, hour
 cell_add_task_link = '''
 <a href="{task_preset_link}?y={{year}}&m={{month}}&d={{day}}&h={{hour}}"> 
-<img src="/static/plus.png" alt="Create Task" style="width:20px;height:20px;"></a>
+<img src="/static/plus.png" alt="Create Task" title="Add" style="width:20px;height:20px;"></a>
 '''.format(task_preset_link=task_preset_link)
 
-# bgcolor: ##00dd7a - busy
+# bgcolor: #00ee7a - busy
 # hour
 # task_name
 # cell_add_task_link
@@ -83,7 +83,7 @@ hour_cell_free = '''
     <th width=60>{cell_add_task_link}</th>
 </tr>'''
 hour_cell = '''
-<tr bgcolor="##00dd7a">
+<tr bgcolor="#00ee7a">
         <th width=60>{hour}</th>
         <th colspan="3">{task_name}</th>
         <th width=60>{cell_add_task_link}</th>
@@ -99,7 +99,7 @@ hour_table = '''
     <table style="width:50%">
         <tr>
             <th colspan="2"><a href="{days_link}/{{prev_day}}/hours">({{prev_day}})</a></th>
-            <th><a href="{days_link}">^ {{day}} ^</a></th>
+            <th><a href="{days_link}">{{day}}</a></th>
             <th colspan="2"><a href="{days_link}/{{next_day}}/hours">({{next_day}})</a></th>
         </tr>
         <tr>{{hours}}</tr>
@@ -109,7 +109,7 @@ hour_table = '''
 # ToDo(den) add links for done, edit, delete ...
 # ToDo(den) add styles ...
 t_table_inner = '''
-    <table bgcolor="##00ee7a" 
+    <table bgcolor="#00ee7a" 
      style="height: 100%; width: 100%; border: 1px solid white; 
      border-collapse: collapse; border-spacing: 0; padding: 0px;">
         {tasks}
@@ -136,7 +136,7 @@ t_cell_inner = '''
 '''
 
 # ==================== DAY ===============
-# bgcolor: ##00ee7a - busy, #aaa - Day zero (from another month)
+# bgcolor: #00ee7a - busy, #aaa - Day zero (from another month)
 # year (months_link)
 # prev_m, prev_m_name - previous month
 # next_m, next_m_name - next month
@@ -146,7 +146,7 @@ day_table = '''
     <table style="width:50%">
         <tr>
             <th colspan="2"><a href="{months_link}/{{prev_m}}/days">({{prev_m_name}})</a></th>
-            <th colspan="3"><a href="{months_link}">^ {{month_name}} ^</a></th>
+            <th colspan="3"><a href="{months_link}">{{month_name}}</a></th>
             <th colspan="2"><a href="{months_link}/{{next_m}}/days">({{next_m_name}})</a></th>
         </tr>
         {{weeks}}
@@ -171,7 +171,7 @@ week_table = ' <tr> [d_1] [d_2] [d_3] [d_4] [d_5] [d_6] [d_7] </tr>'
 
 # ================ MONTH ========================
 # ToDo(den) move title with previous and next (month, year, day) to out
-# bgcolor: ##00ee7a - busy
+# bgcolor: #00ee7a - busy
 # year (months_link)
 # month month_name
 # task_count
@@ -179,7 +179,7 @@ month_cell_free = '''
 <th><a href="{months_link}/{{month}}/days">{{month_name}}</a></th>
 '''.format(months_link=months_link)
 month_cell = '''
-<th bgcolor="##00ee7a"><a href="{months_link}/{{month}}/days">{{month_name}} ({{task_count}})</a></th>
+<th bgcolor="#00ee7a"><a href="{months_link}/{{month}}/days">{{month_name}} ({{task_count}})</a></th>
 '''.format(months_link=months_link)
 
 # year
@@ -188,7 +188,7 @@ month_table = '''
     <table style="width:50%">
         <tr>
             <th><a href="{years_route}/{{prev_year}}/months"> ({{prev_year}}) </a></th>
-            <th><a href="{years_route}">^ {{year}} ^</a></th>
+            <th>{{year}}</th>
             <th><a href="{years_route}/{{next_year}}/months"> ({{next_year}}) </a></th>
         </tr>
         <tr> [m_1]  [m_2]  [m_3] </tr>
