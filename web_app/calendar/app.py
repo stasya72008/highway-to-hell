@@ -3,6 +3,7 @@ import config
 
 from helpers import date_template, gen_day_cell, gen_month_cell, gen_year_cell
 from html_template import *
+from web_app.rest_client.client import create_task
 
 app = Flask(__name__)
 
@@ -14,36 +15,50 @@ global_url_for_redirect = task_preset_link
 @app.route(task_preset_link + '/', methods=['get'])
 @app.route(task_preset_link, methods=['get'])
 def get_form():
-    # Todo(add current date for default)
+    _today = datetime.datetime.now()
+
     form = task_preset_form.format(
-        year=request.args.get('y', 2018),
-        month=request.args.get('m', 1),
-        day=request.args.get('d', 1),
-        hour=request.args.get('h', 1))
+        year=request.args.get('y', _today.year),
+        month=request.args.get('m', _today.month),
+        day=request.args.get('d', _today.day),
+        hour=request.args.get('h', _today.hour))
     return form
 
 
 @app.route(task_creator_link, methods=['post'])
 def set_form():
-    # resp = create_task(user_id='1',
-    # task_name=request.form.get('title')[0], date=None)
+    if request.form.get('calendar') == 'on':
+        calendar_date = '|'.join([request.form.get('year'),
+                                  request.form.get('month'),
+                                  request.form.get('day'),
+                                  request.form.get('hour')])
+    else:
+        calendar_date = ''
 
+    create_task(user_id=1,
+                task_name=request.form.get('task_title'),
+                calendar_date=calendar_date)
+    # ToDo(den) check return status
+    # ToDo(den) remove global ++)
     global global_url_for_redirect
     url_for_redirect = global_url_for_redirect
     global_url_for_redirect = task_preset_link
+
     return redirect(url_for_redirect)
 
 
 @app.route(years_route + '/', methods=['get'])
 @app.route(years_route, methods=['get'])
 def page_of_years():
-    # ToDo(den) Get years from date_template and form page
+    # ToDo(den) Drop it url
     return body_html.format(year_table)
 
 
 @app.route(months_route + '/', methods=['get'])
 @app.route(months_route, methods=['get'])
 def page_of_months(year_id):
+    global global_url_for_redirect
+    global_url_for_redirect = request.base_url
 
     if year_id == 2018:
         prev_year_id = 2018
@@ -65,6 +80,8 @@ def page_of_months(year_id):
 @app.route(days_route + '/', methods=['get'])
 @app.route(days_route, methods=['get'])
 def page_of_days(year_id, month_id):
+    global global_url_for_redirect
+    global_url_for_redirect = request.base_url
 
     # ToDo add switch to previous and next year
     prev_month_id = 1 if month_id == 1 else month_id - 1

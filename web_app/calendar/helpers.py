@@ -2,7 +2,7 @@ from copy import copy
 import json
 
 from html_template import *
-from web_app.rest_client.tasks import get_all_user_tasks
+from web_app.rest_client.client import get_all_user_tasks
 
 with open('date_template.json', 'r') as f:
     date_template = json.loads(f.read())
@@ -122,7 +122,7 @@ def get_tasks_for_period(*args):
     :return: list of tasks for the period
     """
 
-    # ToDo(den) get user id from header or cookies request
+    # ToDo(den) get user_id from header or cookies request
     tasks = get_all_user_tasks(user_id=1)
 
     period = '|'.join([str(arg) for arg in args])
