@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Create task</title>
+    <script>
+        function changeButtonState(checkbox) {{{{
+            document.getElementById('hidden').style.display = checkbox.checked ? 'block': 'none';}}}}
+    </script>
+    <style type="text/css">#hidden {{{{display: block;}}}}</style>
+</head>
+<body>
+<form action="[task_creator_link]" method="post">
+    <p><textarea name="task_title" rows="3" style="width:345px;"></textarea>
+    </p>
+    <p><label for="calendar">Calendar Date</label><input type="checkbox"
+                                                         id="calendar"
+                                                         name="calendar"
+                                                         onChange="changeButtonState(this)"
+                                                         checked></p>
+    <div id="hidden">
+        Year: <input name="year" style="width:40px;" value="{year}">
+        Month: <input name="month" style="width:40px;" value="{month}">
+        Day: <input name="day" style="width:40px;" value="{day}">
+        Hour: <input name="hour" style="width:40px;" value="{hour}"></div>
+    <p><input type="submit" value="Add"></p>
+</form>
+</body>
+</html>
