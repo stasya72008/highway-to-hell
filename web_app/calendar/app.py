@@ -51,7 +51,7 @@ def set_form():
 @app.route(years_route, methods=['get'])
 def page_of_years():
     # ToDo(den) Drop it url
-    return body_html.format(year_table)
+    return body_html.replace('[table]', year_table)
 
 
 @app.route(months_route + '/', methods=['get'])
@@ -74,7 +74,7 @@ def page_of_months(year_id):
                                               prev_year=prev_year_id,
                                               next_year=next_year_id)
 
-    return body_html.format(full_year)
+    return body_html.replace('[table]', full_year)
 
 
 @app.route(days_route + '/', methods=['get'])
@@ -98,7 +98,7 @@ def page_of_days(year_id, month_id):
                                   prev_m_name=prev_month_name,
                                   next_m_name=next_month_name,
                                   weeks=gen_month_cell(year_id, month_id))
-    return body_html.format(full_month)
+    return body_html.replace('[table]', full_month)
 
 
 @app.route(hours_route + '/', methods=['get'])
@@ -124,7 +124,7 @@ def page_of_hours(year_id, month_id, day_id):
                                  prev_day=prev_day_id,
                                  next_day=next_day_id,
                                  hours=gen_day_cell(year_id, month_id, day_id))
-    return body_html.format(full_day)
+    return body_html.replace('[table]', full_day)
 
 
 if __name__ == '__main__':
