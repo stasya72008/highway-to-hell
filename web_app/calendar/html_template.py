@@ -57,13 +57,16 @@ hour_cell = '''
 hour_table = '''
     <table style="width:50%">
         <tr>
-            <th colspan="2"><a href="{days_link}/{{prev_day}}/hours">({{prev_day}})</a></th>
-            <th><a href="{days_link}">{{day}}</a></th>
-            <th colspan="2"><a href="{days_link}/{{next_day}}/hours">({{next_day}})</a></th>
+            <th colspan="2"><a href="[prev_hours_link]"> ({prev_day}) </a></th>
+            <th><a href="[days_link]">{day}</a></th>
+            <th colspan="2"><a href="[next_hours_link]"> ({next_day}) </a></th>
         </tr>
-        <tr>{{hours}}</tr>
+        <tr>{hours}</tr>
     </table>
-'''.format(days_link=days_link)
+'''.replace('[days_link]', days_link)\
+   .replace('[prev_hours_link]', prev_hours_link)\
+   .replace('[next_hours_link]', next_hours_link)
+
 
 # ToDo(den) add links for done, edit, delete ...
 # ToDo(den) add styles ...
@@ -102,13 +105,16 @@ t_cell_inner = '''
 day_table = '''
     <table style="width:50%">
         <tr>
-            <th colspan="2"><a href="{months_link}/{{prev_m}}/days">({{prev_m_name}})</a></th>
-            <th colspan="3"><a href="{months_link}">{{month_name}}</a></th>
-            <th colspan="2"><a href="{months_link}/{{next_m}}/days">({{next_m_name}})</a></th>
+            <th colspan="2"><a href="[prev_days_link]">({prev_m_name})</a></th>
+            <th colspan="3"><a href="[months_link]">{month_name} ({year})</a></th>
+            <th colspan="2"><a href="[next_days_link]">({next_m_name})</a></th>
         </tr>
-        {{weeks}}
+        {weeks}
     </table>
-'''.format(months_link=months_link)
+'''.replace('[months_link]', months_link)\
+   .replace('[prev_days_link]', prev_days_link)\
+   .replace('[next_days_link]', next_days_link)
+
 
 # day
 day_cell_another_month = '<th width=50 bgcolor="#aaa">{day}</th>'
@@ -144,22 +150,18 @@ month_cell = '''
 month_table = '''
     <table style="width:50%">
         <tr>
-            <th><a href="{years_route}/{{prev_year}}/months"> ({{prev_year}}) </a></th>
-            <th>{{year}}</th>
-            <th><a href="{years_route}/{{next_year}}/months"> ({{next_year}}) </a></th>
+            <th><a href="[prev_months_link]"> ({prev_year}) </a></th>
+            <th>{year}</th>
+            <th><a href="[next_months_link]"> ({next_year}) </a></th>
         </tr>
-        <tr> [m_1]  [m_2]  [m_3] </tr>
-        <tr> [m_4]  [m_5]  [m_6] </tr>
-        <tr> [m_7]  [m_8]  [m_9] </tr>
-        <tr> [m_10] [m_11] [m_12] </tr>
-    </table>'''.format(years_route=years_route,
-                       months_link=months_link,
-                       year_2018_link=year_2018_link,
-                       year_2019_link=year_2019_link,
-                       year_2020_link=year_2020_link)
+        <tr> [m_1]  [m_2]  [m_3] </tr>  <tr> [m_4]  [m_5]  [m_6] </tr> 
+        <tr> [m_7]  [m_8]  [m_9] </tr>  <tr> [m_10] [m_11] [m_12] </tr>
+    </table>'''.replace('[prev_months_link]', prev_months_link)\
+               .replace('[next_months_link]', next_months_link)
+
 
 # ================= YEAR ========================
-
+# deprecated
 year_table = '''
 <table style="width:50%">
    <tr>
