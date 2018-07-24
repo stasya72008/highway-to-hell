@@ -1,193 +1,168 @@
 {
+  "1": "January",
+  "2": "February",
+  "3": "March",
+  "4": "April",
+  "5": "May",
+  "6": "June",
+  "7": "July",
+  "8": "August",
+  "9": "September",
+  "10": "October",
+  "11": "November",
+  "12": "December",
   "2017": {
     "12": {
-      "name": "December",
       "days": 31,
       "first_day": 5
     }
   },
   "2018": {
     "1": {
-      "name": "January",
       "days": 31,
       "first_day": 1
     },
     "2": {
-      "name": "February",
       "days": 28,
       "first_day": 4
     },
     "3": {
-      "name": "March",
       "days": 31,
       "first_day": 4
     },
     "4": {
-      "name": "April",
       "days": 30,
       "first_day": 7
     },
     "5": {
-      "name": "May",
       "days": 31,
       "first_day": 2
     },
     "6": {
-      "name": "June",
       "days": 30,
       "first_day": 5
     },
     "7": {
-      "name": "July",
       "days": 31,
       "first_day": 7
     },
     "8": {
-      "name": "August",
       "days": 31,
       "first_day": 3
     },
     "9": {
-      "name": "September",
       "days": 30,
       "first_day": 6
     },
     "10": {
-      "name": "October",
       "days": 31,
       "first_day": 1
     },
     "11": {
-      "name": "November",
       "days": 30,
       "first_day": 4
     },
     "12": {
-      "name": "December",
       "days": 31,
       "first_day": 6
     }
   },
-    "2019": {
+  "2019": {
     "1": {
-      "name": "January",
       "days": 31,
       "first_day": 2
     },
     "2": {
-      "name": "February",
       "days": 28,
       "first_day": 5
     },
     "3": {
-      "name": "March",
       "days": 31,
       "first_day": 5
     },
     "4": {
-      "name": "April",
       "days": 30,
       "first_day": 1
     },
     "5": {
-      "name": "May",
       "days": 31,
       "first_day": 3
     },
     "6": {
-      "name": "June",
       "days": 30,
       "first_day": 6
     },
     "7": {
-      "name": "July",
       "days": 31,
       "first_day": 1
     },
     "8": {
-      "name": "August",
       "days": 31,
       "first_day": 4
     },
     "9": {
-      "name": "September",
       "days": 30,
       "first_day": 7
     },
     "10": {
-      "name": "October",
       "days": 31,
       "first_day": 2
     },
     "11": {
-      "name": "November",
       "days": 30,
       "first_day": 5
     },
     "12": {
-      "name": "December",
       "days": 31,
       "first_day": 7
     }
   },
-      "2020": {
+  "2020": {
     "1": {
-      "name": "January",
       "days": 31,
       "first_day": 3
     },
     "2": {
-      "name": "February",
       "days": 28,
       "first_day": 6
     },
     "3": {
-      "name": "March",
       "days": 31,
       "first_day": 7
     },
     "4": {
-      "name": "April",
       "days": 30,
       "first_day": 3
     },
     "5": {
-      "name": "May",
       "days": 31,
       "first_day": 5
     },
     "6": {
-      "name": "June",
       "days": 30,
       "first_day": 1
     },
     "7": {
-      "name": "July",
       "days": 31,
       "first_day": 3
     },
     "8": {
-      "name": "August",
       "days": 31,
       "first_day": 6
     },
     "9": {
-      "name": "September",
       "days": 30,
       "first_day": 2
     },
     "10": {
-      "name": "October",
       "days": 31,
       "first_day": 4
     },
     "11": {
-      "name": "November",
       "days": 30,
       "first_day": 7
     },
     "12": {
-      "name": "December",
       "days": 31,
       "first_day": 2
     }

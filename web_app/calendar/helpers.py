@@ -11,7 +11,7 @@ with open('date_template.json', 'r') as f:
 def gen_year_cell(year):
     full_year = copy(month_table)
     for m_index in range(1, 13):
-        month_name = date_template['2018'][str(m_index)]['name']
+        month_name = date_template[str(m_index)]
         task_count = len(get_tasks_for_period(year, m_index))
         if task_count:
             m_cell = month_cell.format(year=year,
@@ -171,11 +171,9 @@ def border_items(year, month=None, day=None):
             result['next_m'] = 1
             result['next_y'] = str(border_items(year)['next_y'])
 
-        result['prev_m_name'] = date_template.get(
-            '2018')[str(result['prev_m'])]['name']
-        result['next_m_name'] = date_template.get(
-            '2018')[str(result['next_m'])]['name']
-        result['m_name'] = date_template['2018'][str(month)]['name']
+        result['prev_m_name'] = date_template[str(result['prev_m'])]
+        result['next_m_name'] = date_template[str(result['next_m'])]
+        result['m_name'] = date_template[str(month)]
 
     elif year:
         result['prev_y'] = year - 1
