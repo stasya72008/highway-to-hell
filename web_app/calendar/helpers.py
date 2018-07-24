@@ -11,7 +11,7 @@ with open('date_template.json', 'r') as f:
 def gen_year_cell(year):
     full_year = copy(month_table)
     for m_index in range(1, 13):
-        month_name = date_template[str(year)][str(m_index)]['name']
+        month_name = date_template['2018'][str(m_index)]['name']
         task_count = len(get_tasks_for_period(year, m_index))
         if task_count:
             m_cell = month_cell.format(year=year,
@@ -132,3 +132,58 @@ def get_tasks_for_period(*args):
              task.get('status') in ('active', 'done')]
 
     return tasks
+
+
+def border_items(year, month=None, day=None):
+    result = {}
+
+    if day is not None:
+        result['next_y'] = year
+        result['prev_y'] = year
+        result['next_m'] = month
+        result['prev_m'] = month
+        result['prev_d'] = day - 1
+        result['next_d'] = day + 1
+
+        if day == 1:
+            calendar = border_items(year, month)
+            result['prev_y'] = str(calendar['prev_y'])
+            result['prev_m'] = str(calendar['prev_m'])
+            result['prev_d'] = date_template.get(
+                result['prev_y'])[result['prev_m']]['days']
+
+        elif day == date_template[str(year)][str(month)]['days']:
+            calendar = border_items(year, month)
+            result['next_y'] = str(calendar['next_y'])
+            result['next_m'] = str(calendar['next_m'])
+            result['next_d'] = 1
+
+    elif month is not None:
+        result['next_y'] = year
+        result['prev_y'] = year
+        result['prev_m'] = month - 1
+        result['next_m'] = month + 1
+
+        if month == 1:
+            result['prev_m'] = 12
+            result['prev_y'] = str(border_items(year)['prev_y'])
+        elif month == 12:
+            result['next_m'] = 1
+            result['next_y'] = str(border_items(year)['next_y'])
+
+        result['prev_m_name'] = date_template.get(
+            '2018')[str(result['prev_m'])]['name']
+        result['next_m_name'] = date_template.get(
+            '2018')[str(result['next_m'])]['name']
+        result['m_name'] = date_template['2018'][str(month)]['name']
+
+    elif year:
+        result['prev_y'] = year - 1
+        result['next_y'] = year + 1
+
+        if year == 2018:
+            result['prev_y'] = 2018
+        elif year == 2020:
+            result['next_y'] = 2020
+
+    return result
