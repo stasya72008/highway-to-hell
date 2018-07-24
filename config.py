@@ -56,6 +56,19 @@ class RestConfig(Config):
         return self.get_property('debug')
 
 
+class RestEndpointConfig(Config):
+    def __init__(self):
+        super(RestEndpointConfig, self).__init__('rest_endpoint')
+
+    @property
+    def host(self):
+        return self.get_property('host')
+
+    @property
+    def port(self):
+        return self.get_property('port')
+
+
 class CalendarConfig(Config):
     def __init__(self):
         super(CalendarConfig, self).__init__('calendar')

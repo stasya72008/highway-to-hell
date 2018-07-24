@@ -4,7 +4,7 @@ import json
 import config
 import data.data_templates as template
 
-conf = config.RestConfig()
+conf = config.RestEndpointConfig()
 
 base_url = 'http://{host}:{port}/'.format(host=conf.host, port=conf.port)
 user_tasks = base_url + 'users/{user_id}/tasks'
