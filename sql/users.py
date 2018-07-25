@@ -1,16 +1,27 @@
-from sqlalchemy import MetaData
-from sqlalchemy import Table
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from sql.entities import User
 
-from sql.driver import SQlDriver
+import config
+
+conf = config.DBConfig()
 
 
-class SQLUsers(SQlDriver):
+class SQLUsers:
     def __init__(self):
-        super(SQLUsers, self).__init__()
-        metadata = MetaData()
-        self.users = Table(User, metadata)
+        self.engine = create_engine('mysql://{user}:{password}@{host}:{port}/highway'.format(
+            user=conf.user, password=conf.password, host=conf.host, port=conf.port),
+            pool_size=2)
+
+        with self.engine.begin() as conn:
+            conn.execute('use highway')
+
+        self.Session = sessionmaker(bind=self.engine)
+
+    # def __init__(self):
+    #     # super(SQLUsers, self).__init__()
+    #     metadata = MetaData()
+    #     self.users = Table(User, metadata)
 
     def add_user(self, user_name):
         session = self.Session()
@@ -18,12 +29,12 @@ class SQLUsers(SQlDriver):
         try:
             session.add(user)
             session.commit()
+            return session.query(User).filter_by(id=user.id).first()
         except:
             session.rollback()
             raise
         finally:
             session.close()
-        #Todo(stasya) return User obj
 
     def update_user(self, user_id, user_name):
         session = self.Session()
@@ -37,6 +48,22 @@ class SQLUsers(SQlDriver):
         finally:
             session.close()
 
-if __name__ == '__main__':
-    a = SQLUsers().update_user(3, 'azaza')
+    def delete_user(self, user_id):
+        session = self.Session()
+        try:
+            session.query(User).filter_by(id=user_id).delete()
+            session.commit()
+        except:
+            session.rollback()
+            raise
+        finally:
+            session.close()
 
+    def get_user(self, user_id):
+        session = self.Session()
+        try:
+            return session.query(User).filter_by(id=user_id).first()
+        except:
+            raise
+        finally:
+            session.close()

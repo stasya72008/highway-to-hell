@@ -15,7 +15,7 @@ cursor.execute(query)
 
 query = 'CREATE table users (' \
         'ID int AUTO_INCREMENT, ' \
-        'Username varchar(20) NOT NULL,' \
+        'Username varchar(255) NOT NULL,' \
         'PRIMARY KEY (ID)' \
         ')'
 cursor.execute(query)
