@@ -2,15 +2,13 @@ from flask import Flask, request, redirect
 import config
 
 from helpers import gen_day_cell, gen_month_cell, gen_year_cell, \
-    border_items
+    border_items, set_parameters, pop_parameter
 from html_template import *
 from web_app.rest_client.client import create_task
 
 app = Flask(__name__)
 
 config = config.CalendarConfig()
-
-global_url_for_redirect = task_preset_link
 
 
 @app.route(task_preset_link + '/', methods=['get'])
@@ -40,10 +38,7 @@ def set_form():
                 task_name=request.form.get('task_title'),
                 calendar_date=calendar_date)
     # ToDo(den) check return status
-    # ToDo(den) remove global ++)
-    global global_url_for_redirect
-    url_for_redirect = global_url_for_redirect
-    global_url_for_redirect = task_preset_link
+    url_for_redirect = pop_parameter()
 
     return redirect(url_for_redirect)
 
@@ -58,8 +53,7 @@ def page_of_years():
 @app.route(months_route + '/', methods=['get'])
 @app.route(months_route, methods=['get'])
 def page_of_months(year_id):
-    global global_url_for_redirect
-    global_url_for_redirect = request.base_url
+    set_parameters(base_url=request.base_url)
 
     calendar = border_items(year_id)
     return gen_year_cell(year_id).format(year=year_id,
@@ -73,8 +67,7 @@ def page_of_months(year_id):
 @app.route(days_route + '/', methods=['get'])
 @app.route(days_route, methods=['get'])
 def page_of_days(year_id, month_id):
-    global global_url_for_redirect
-    global_url_for_redirect = request.base_url
+    set_parameters(base_url=request.base_url)
 
     calendar = border_items(year_id, month_id)
     return day_table.format(year=year_id,
@@ -92,8 +85,7 @@ def page_of_days(year_id, month_id):
 @app.route(hours_route + '/', methods=['get'])
 @app.route(hours_route, methods=['get'])
 def page_of_hours(year_id, month_id, day_id):
-    global global_url_for_redirect
-    global_url_for_redirect = request.base_url
+    set_parameters(base_url=request.base_url)
 
     calendar = border_items(year_id, month_id, day_id)
     return hour_table.format(year=year_id,
