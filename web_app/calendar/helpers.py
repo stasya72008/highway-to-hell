@@ -5,13 +5,30 @@ from html_template import *
 from web_app.rest_client.client import get_all_user_tasks
 
 with open('date_template.json', 'r') as f:
-    date_template = json.loads(f.read())
+    _date_template = json.loads(f.read())
+
+
+# Get / Set Headers
+_global_url_for_redirect = task_preset_link
+
+
+def set_parameters(base_url):
+    global _global_url_for_redirect
+    _global_url_for_redirect = base_url
+
+
+def pop_parameter():
+    global _global_url_for_redirect
+    url_for_redirect = _global_url_for_redirect
+    _global_url_for_redirect = task_preset_link
+    return url_for_redirect
+# Get / Set Headers
 
 
 def gen_year_cell(year):
     full_year = copy(month_table)
     for m_index in range(1, 13):
-        month_name = date_template['2018'][str(m_index)]['name']
+        month_name = _date_template[str(m_index)]
         task_count = len(get_tasks_for_period(year, m_index))
         if task_count:
             m_cell = month_cell.format(year=year,
@@ -35,14 +52,14 @@ def gen_month_cell(year, month):
     day_of_week = 1
     d_index = 1
 
-    number_of_d = date_template[str(year)][str(month)]['days']
-    first_d = date_template[str(year)][str(month)]['first_day']
+    number_of_d = _date_template[str(year)][str(month)]['days']
+    first_d = _date_template[str(year)][str(month)]['first_day']
     # ToDo add switch to previous and next month / year
     if month == 1:
-        prev_month_days = date_template[str(year - 1)]['12']['days'] - \
+        prev_month_days = _date_template[str(year - 1)]['12']['days'] - \
                      first_d + 2
     else:
-        prev_month_days = date_template[str(year)][str(
+        prev_month_days = _date_template[str(year)][str(
             month - 1)]['days'] - first_d + 2
 
     # form previous month
@@ -149,10 +166,10 @@ def border_items(year, month=None, day=None):
             calendar = border_items(year, month)
             result['prev_y'] = str(calendar['prev_y'])
             result['prev_m'] = str(calendar['prev_m'])
-            result['prev_d'] = date_template.get(
+            result['prev_d'] = _date_template.get(
                 result['prev_y'])[result['prev_m']]['days']
 
-        elif day == date_template[str(year)][str(month)]['days']:
+        elif day == _date_template[str(year)][str(month)]['days']:
             calendar = border_items(year, month)
             result['next_y'] = str(calendar['next_y'])
             result['next_m'] = str(calendar['next_m'])
@@ -171,11 +188,9 @@ def border_items(year, month=None, day=None):
             result['next_m'] = 1
             result['next_y'] = str(border_items(year)['next_y'])
 
-        result['prev_m_name'] = date_template.get(
-            '2018')[str(result['prev_m'])]['name']
-        result['next_m_name'] = date_template.get(
-            '2018')[str(result['next_m'])]['name']
-        result['m_name'] = date_template['2018'][str(month)]['name']
+        result['prev_m_name'] = _date_template[str(result['prev_m'])]
+        result['next_m_name'] = _date_template[str(result['next_m'])]
+        result['m_name'] = _date_template[str(month)]
 
     elif year:
         result['prev_y'] = year - 1

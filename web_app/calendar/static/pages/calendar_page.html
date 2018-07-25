@@ -2,28 +2,28 @@
 <html>
 <head>
     <style>
-        table, th, td {{border: 1px solid black; collapse;}}
-        a {{
+        table, th, td {{{{border: 1px solid black; collapse;}}}}
+        a {{{{
             text-decoration: none; color: black;
-        }}
-        td.icon-cell {{
+        }}}}
+        td.icon-cell {{{{
             width: 22px;
             vertical-align: middle;
-        }}
-        img.icon {{
+        }}}}
+        img.icon {{{{
             width: 20px;
             height: 20px;
-        }}
-        table.inner {{
+        }}}}
+        table.inner {{{{
             bgcolor: #c9f1de;
             height: 100%;
             width: 100%;
             border-spacing: 0;
             border: none;
-        }}
-        table.inner td {{
+        }}}}
+        table.inner td {{{{
             border: none;
-        }}
+        }}}}
 
     </style>
 </head>
@@ -36,14 +36,22 @@
         <th><a href="[days_link]">Days</a></th>
         <th><a href="[months_link]">Months</a></th>
         <th class="icon-cell">
-            <a href="[task_preset_link]?y={year}&m={month}&d={day}&h={hour}">
-                <img src="/static/plus.png" alt="Create Task" title="Add"
-                     class="icon"></a>
+<a href="[task_preset_link]?y={year}&m={month}&d={day}&h={hour}">
+<img src="/static/plus.png" alt="Create Task" title="Add" class="icon"></a>
         </th>
     </tr>
 </table>
 <p></p>
-[table]
+    <table style="width:50%; table-layout:fixed;">
+        <tr>
+            <th><a href="[prev_link]"> ({{prev_item}}) </a></th>
+            <th><a href="[current_link]">{{current_item}}</a></th>
+            <th><a href="[next_link]"> ({{next_item}}) </a></th>
+        </tr>
+    </table>
+    <table style="width:50%">
+        {{table}}
+    </table>
 </body>
 </html>
 

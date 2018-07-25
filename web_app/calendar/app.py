@@ -2,15 +2,13 @@ from flask import Flask, request, redirect
 import config
 
 from helpers import gen_day_cell, gen_month_cell, gen_year_cell, \
-    border_items
+    border_items, set_parameters, pop_parameter
 from html_template import *
 from web_app.rest_client.client import create_task
 
 app = Flask(__name__)
 
 config = config.CalendarConfig()
-
-global_url_for_redirect = task_preset_link
 
 
 @app.route(task_preset_link + '/', methods=['get'])
@@ -40,10 +38,7 @@ def set_form():
                 task_name=request.form.get('task_title'),
                 calendar_date=calendar_date)
     # ToDo(den) check return status
-    # ToDo(den) remove global ++)
-    global global_url_for_redirect
-    url_for_redirect = global_url_for_redirect
-    global_url_for_redirect = task_preset_link
+    url_for_redirect = pop_parameter()
 
     return redirect(url_for_redirect)
 
@@ -58,54 +53,54 @@ def page_of_years():
 @app.route(months_route + '/', methods=['get'])
 @app.route(months_route, methods=['get'])
 def page_of_months(year_id):
-    global global_url_for_redirect
-    global_url_for_redirect = request.base_url
+    set_parameters(base_url=request.base_url)
 
     calendar = border_items(year_id)
-    full_year = gen_year_cell(year_id).format(year=year_id,
-                                              prev_year=calendar['prev_y'],
-                                              next_year=calendar['next_y'])
-
-    return body_html.replace('[table]', full_year)
+    return gen_year_cell(year_id).format(year=year_id,
+                                         current_item=year_id,
+                                         prev_item=calendar['prev_y'],
+                                         next_item=calendar['next_y'],
+                                         prev_year=calendar['prev_y'],
+                                         next_year=calendar['next_y'])
 
 
 @app.route(days_route + '/', methods=['get'])
 @app.route(days_route, methods=['get'])
 def page_of_days(year_id, month_id):
-    global global_url_for_redirect
-    global_url_for_redirect = request.base_url
+    set_parameters(base_url=request.base_url)
 
     calendar = border_items(year_id, month_id)
-    full_month = day_table.format(year=year_id,
-                                  month_name=calendar['m_name'],
-                                  prev_year=calendar['prev_y'],
-                                  next_year=calendar['next_y'],
-                                  prev_month=calendar['prev_m'],
-                                  next_month=calendar['next_m'],
-                                  prev_m_name=calendar['prev_m_name'],
-                                  next_m_name=calendar['next_m_name'],
-                                  weeks=gen_month_cell(year_id, month_id))
-    return body_html.replace('[table]', full_month)
+    return day_table.format(year=year_id,
+                            month=month_id,
+                            current_item=calendar['m_name'],
+                            prev_item=calendar['prev_m_name'],
+                            next_item=calendar['next_m_name'],
+                            prev_year=calendar['prev_y'],
+                            next_year=calendar['next_y'],
+                            prev_month=calendar['prev_m'],
+                            next_month=calendar['next_m'],
+                            table=gen_month_cell(year_id, month_id))
 
 
 @app.route(hours_route + '/', methods=['get'])
 @app.route(hours_route, methods=['get'])
 def page_of_hours(year_id, month_id, day_id):
-    global global_url_for_redirect
-    global_url_for_redirect = request.base_url
+    set_parameters(base_url=request.base_url)
 
     calendar = border_items(year_id, month_id, day_id)
-    full_day = hour_table.format(year=year_id,
-                                 month=month_id,
-                                 day=day_id,
-                                 prev_year=calendar['prev_y'],
-                                 next_year=calendar['next_y'],
-                                 prev_month=calendar['prev_m'],
-                                 next_month=calendar['next_m'],
-                                 prev_day=calendar['prev_d'],
-                                 next_day=calendar['next_d'],
-                                 hours=gen_day_cell(year_id, month_id, day_id))
-    return body_html.replace('[table]', full_day)
+    return hour_table.format(year=year_id,
+                             month=month_id,
+                             day=day_id,
+                             current_item=day_id,
+                             prev_item=calendar['prev_d'],
+                             next_item=calendar['next_d'],
+                             prev_year=calendar['prev_y'],
+                             next_year=calendar['next_y'],
+                             prev_month=calendar['prev_m'],
+                             next_month=calendar['next_m'],
+                             prev_day=calendar['prev_d'],
+                             next_day=calendar['next_d'],
+                             table=gen_day_cell(year_id, month_id, day_id))
 
 
 if __name__ == '__main__':
