@@ -16,7 +16,7 @@ with open(path.join('static', 'pages', 'calendar_page.html'), 'r') as f:
 main_page = main_page.replace('[months_link]', months_link) \
                      .replace('[days_link]', days_link) \
                      .replace('[hours_link]', hours_link) \
-                     .replace('[task_preset_link]', task_preset_link)
+                     .replace('[tasks_add_route]', tasks_add_route)
 
 body_html = main_page.format(year=_today.year,
                              month=_today.month,
@@ -31,9 +31,9 @@ hour_table = body_html.replace('[current_link]', days_link)\
 
 # year, month, day, hour
 cell_add_task_link = '''
-<a href="{task_preset_link}?y={{year}}&m={{month}}&d={{day}}&h={{hour}}"> 
+<a href="{tasks_add_route}?y={{year}}&m={{month}}&d={{day}}&h={{hour}}"> 
 <img src="/static/plus.png" alt="Create Task" title="Add" class="icon"></a>
-'''.format(task_preset_link=task_preset_link)
+'''.format(tasks_add_route=tasks_add_route)
 
 # bgcolor: #c9f1de - busy
 # hour
@@ -61,9 +61,10 @@ t_table_inner = '''
     </table>
 '''
 t_cell_inner = '''
-<tr><td><a href="" title="Close/Reopen">{task_name}</a></td>
+<tr><td><a href="[tasks_closereopen_link]" 
+         title="Close/Reopen">{task_name}</a></td>
 
-    <td class="icon-cell"><a href="">
+    <td class="icon-cell"><a href="[tasks_closereopen_link]">
 <img src="/static/done.png" alt="done" title="Close/Reopen" class="icon">
 </a></td>
  
@@ -71,14 +72,16 @@ t_cell_inner = '''
 <img src="/static/edit.png" alt="edit" title="Edit" class="icon">
 </a></td> 
 
-    <td class="icon-cell"><a href="">
+    <td class="icon-cell"><a href="[tasks_archive_link]">
 <img src="/static/archive.png" alt="archive" title="To Archive" class="icon">
 </a></td>
 
-    <td class="icon-cell"><a href="">
+    <td class="icon-cell"><a href="[tasks_delete_link]">
 <img src="/static/delete.png" alt="delete" title="Delete" class="icon">
 </a></td></tr>
-'''
+'''.replace('[tasks_delete_link]', tasks_delete_link)\
+   .replace('[tasks_archive_link]', tasks_archive_link)\
+   .replace('[tasks_closereopen_link]', tasks_closereopen_link)\
 
 # ==================== DAY ===============
 
