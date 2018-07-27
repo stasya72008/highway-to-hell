@@ -46,5 +46,21 @@
         "date": "today",
         "status": "active",
         "calendar_date": "2018|2|2|0"
+    },
+    {
+        "user_id": 1,
+        "id": 6,
+        "name": "Not a boring task name",
+        "date": "today",
+        "status": "active",
+        "calendar_date": ""
+    },
+    {
+        "user_id": 1,
+        "id": 7,
+        "name": "Another original task",
+        "date": "today",
+        "status": "active",
+        "calendar_date": ""
     }
 ]

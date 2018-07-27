@@ -132,6 +132,34 @@ def gen_day_cell(year, month, day):
     return full_day
 
 
+def gen_daily_cells():
+    tasks = get_daily_tasks()
+    tasks_list = ''
+
+    if tasks:
+        task_line = ''
+        for task in tasks:
+            if task.get('status') == 'done':
+                task_name = '<s>{}</s>'.format(task.get('name'))
+            else:
+                task_name = task.get('name')
+            task_line += t_cell_inner.format(task=task.get('id'),
+                                             task_name=task_name)
+        tasks_list += task_cell.format(
+            task_name=t_table_inner.format(tasks=task_line))
+
+    return tasks_list
+
+
+def get_daily_tasks():
+    tasks = get_all_user_tasks(user_id=1)
+    tasks = [task for task in tasks if
+             task.get('calendar_date') == "" and
+             task.get('status') in ('active', 'done')]
+
+    return tasks
+
+
 # ToDo(den) move this logic to rest
 def get_tasks_for_period(*args):
     """ The method for selecting tasks for user by date
