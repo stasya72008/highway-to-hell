@@ -21,5 +21,17 @@ year_2018_link = years_route + '/2018/months'
 year_2019_link = years_route + '/2019/months'
 year_2020_link = years_route + '/2020/months'
 
-task_preset_link = '/task_preset'
+
+tasks_add_route = '/tasks'
 task_creator_link = '/task_creator'
+
+tasks_delete_route = '/tasks/<int:task_id>/delete'
+tasks_edit_route = '/tasks/<int:task_id>/edit'
+tasks_archive_route = '/tasks/<int:task_id>/archive'
+tasks_close_reopen_route = '/tasks/<int:task_id>/closereopen'
+
+tasks_delete_link = '/tasks/{task}/delete'
+tasks_edit_link = '/tasks/{task}/edit'
+tasks_archive_link = '/tasks/{task}/archive'
+tasks_close_reopen_link = '/tasks/{task}/closereopen'
+

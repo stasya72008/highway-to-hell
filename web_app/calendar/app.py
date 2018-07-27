@@ -4,16 +4,18 @@ import config
 from helpers import gen_day_cell, gen_month_cell, gen_year_cell, \
     border_items, set_parameters, pop_parameter
 from html_template import *
-from web_app.rest_client.client import create_task
+from web_app.rest_client.client import create_task, delete_task, edit_task, \
+    get_task_by_id
 
 app = Flask(__name__)
 
 config = config.CalendarConfig()
 
 
-@app.route(task_preset_link + '/', methods=['get'])
-@app.route(task_preset_link, methods=['get'])
-def get_form():
+# Create task
+@app.route(tasks_add_route + '/', methods=['get'])
+@app.route(tasks_add_route, methods=['get'])
+def tasks_add():
     _today = datetime.datetime.now()
 
     form = task_preset_form.format(
@@ -25,7 +27,7 @@ def get_form():
 
 
 @app.route(task_creator_link, methods=['post'])
-def set_form():
+def tasks_creator():
     if request.form.get('calendar') == 'on':
         calendar_date = '|'.join([request.form.get('year'),
                                   request.form.get('month'),
@@ -34,12 +36,53 @@ def set_form():
     else:
         calendar_date = ''
 
+    # ToDo(den) get user_id from header (global dict...(= )
     create_task(user_id=1,
                 task_name=request.form.get('task_title'),
                 calendar_date=calendar_date)
     # ToDo(den) check return status
     url_for_redirect = pop_parameter()
 
+    return redirect(url_for_redirect)
+
+
+# Delete task
+@app.route(tasks_delete_route, methods=['get'])
+def task_remover(task_id):
+    delete_task(task_id)
+
+    # ToDo(den) check return status
+    url_for_redirect = pop_parameter()
+
+    return redirect(url_for_redirect)
+
+
+# Close/ reopen task
+@app.route(tasks_close_reopen_route, methods=['get'])
+def tasks_close_reopen(task_id):
+
+    if get_task_by_id(task_id)['status'] == 'active':
+        edit_task(task_id, status='done')
+    elif get_task_by_id(task_id)['status'] == 'done':
+        edit_task(task_id, status='active')
+    else:
+        # ToDo(den) return error for invalid status
+        pass
+    # ToDo(den) check return status
+
+    url_for_redirect = pop_parameter()
+    return redirect(url_for_redirect)
+
+
+# Archive task
+@app.route(tasks_archive_route, methods=['get'])
+def tasks_archive(task_id):
+
+    edit_task(task_id, status='archive')
+    # ToDo(den) return error for invalid status
+
+    # ToDo(den) check return status
+    url_for_redirect = pop_parameter()
     return redirect(url_for_redirect)
 
 

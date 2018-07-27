@@ -9,7 +9,7 @@ with open('date_template.json', 'r') as f:
 
 
 # Get / Set Headers
-_global_url_for_redirect = task_preset_link
+_global_url_for_redirect = tasks_add_route
 
 
 def set_parameters(base_url):
@@ -20,7 +20,7 @@ def set_parameters(base_url):
 def pop_parameter():
     global _global_url_for_redirect
     url_for_redirect = _global_url_for_redirect
-    _global_url_for_redirect = task_preset_link
+    _global_url_for_redirect = tasks_add_route
     return url_for_redirect
 # Get / Set Headers
 
@@ -120,7 +120,8 @@ def gen_day_cell(year, month, day):
                     task_name = '<s>{}</s>'.format(task.get('name'))
                 else:
                     task_name = task.get('name')
-                task_line += t_cell_inner.format(task_name=task_name)
+                task_line += t_cell_inner.format(task=task.get('id'),
+                                                 task_name=task_name)
             full_day += hour_cell.format(
                 hour=h_index,
                 task_name=t_table_inner.format(tasks=task_line),
