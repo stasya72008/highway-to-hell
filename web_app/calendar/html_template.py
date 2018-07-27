@@ -61,10 +61,10 @@ t_table_inner = '''
     </table>
 '''
 t_cell_inner = '''
-<tr><td><a href="[tasks_closereopen_link]" 
+<tr><td><a href="[tasks_close_reopen_link]" 
          title="Close/Reopen">{task_name}</a></td>
 
-    <td class="icon-cell"><a href="[tasks_closereopen_link]">
+    <td class="icon-cell"><a href="[tasks_close_reopen_link]">
 <img src="/static/done.png" alt="done" title="Close/Reopen" class="icon">
 </a></td>
  
@@ -81,7 +81,7 @@ t_cell_inner = '''
 </a></td></tr>
 '''.replace('[tasks_delete_link]', tasks_delete_link)\
    .replace('[tasks_archive_link]', tasks_archive_link)\
-   .replace('[tasks_closereopen_link]', tasks_closereopen_link)\
+   .replace('[tasks_close_reopen_link]', tasks_close_reopen_link)\
 
 # ==================== DAY ===============
 

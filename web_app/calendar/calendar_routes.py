@@ -28,10 +28,10 @@ task_creator_link = '/task_creator'
 tasks_delete_route = '/tasks/<int:task_id>/delete'
 tasks_edit_route = '/tasks/<int:task_id>/edit'
 tasks_archive_route = '/tasks/<int:task_id>/archive'
-tasks_closereopen_route = '/tasks/<int:task_id>/closereopen'
+tasks_close_reopen_route = '/tasks/<int:task_id>/closereopen'
 
 tasks_delete_link = '/tasks/{task}/delete'
 tasks_edit_link = '/tasks/{task}/edit'
 tasks_archive_link = '/tasks/{task}/archive'
-tasks_closereopen_link = '/tasks/{task}/closereopen'
+tasks_close_reopen_link = '/tasks/{task}/closereopen'
 

@@ -48,7 +48,7 @@ def tasks_creator():
 
 # Delete task
 @app.route(tasks_delete_route, methods=['get'])
-def tasks_deleter(task_id):
+def task_remover(task_id):
     delete_task(task_id)
 
     # ToDo(den) check return status
@@ -58,7 +58,7 @@ def tasks_deleter(task_id):
 
 
 # Close/ reopen task
-@app.route(tasks_closereopen_route, methods=['get'])
+@app.route(tasks_close_reopen_route, methods=['get'])
 def tasks_close_reopen(task_id):
 
     if get_task_by_id(task_id)['status'] == 'active':
