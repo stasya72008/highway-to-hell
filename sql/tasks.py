@@ -123,3 +123,29 @@ class SQLTasks:
             raise
         finally:
             session.close()
+
+    def get_tasks_for_period2(self, user_id, year, month=None, day=None):
+        session = self.Session()
+        tasksss = session.query(Task).filter_by(user_id=user_id).filter(
+            extract('year', Task.calendar_date) == year,
+            True if month is None else
+                (extract('month', Task.calendar_date) == month),
+            True if day is None else
+                (extract('day', Task.calendar_date) == day)).all()
+        session.close()
+
+        return tasksss
+
+import pprint
+qqq = SQLTasks()
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint([t.calendar_date for t in qqq.get_all_user_tasks(5)])
+
+assert len(qqq.get_tasks_for_period(5, 2018)) == \
+       len(qqq.get_tasks_for_period2(5, 2018))
+
+assert len(qqq.get_tasks_for_period(5, 2018, 7)) == \
+       len(qqq.get_tasks_for_period2(5, 2018, 7))
+
+assert len(qqq.get_tasks_for_period(5, 2018, 7, 15)) == \
+       len(qqq.get_tasks_for_period2(5, 2018, 7, 15))
