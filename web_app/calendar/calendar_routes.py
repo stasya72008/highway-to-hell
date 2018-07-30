@@ -1,4 +1,5 @@
 years_route = '/calendar/years'
+daily_route = '/calendar/daily'
 
 months_route = years_route + '/<int:year_id>/months'
 days_route = months_route + '/<int:month_id>/days'

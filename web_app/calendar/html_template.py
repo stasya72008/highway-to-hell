@@ -13,7 +13,22 @@ with open(path.join('static', 'pages', 'task_creation_form.html'), 'r') as f:
 with open(path.join('static', 'pages', 'calendar_page.html'), 'r') as f:
     main_page = f.read()
 
-main_page = main_page.replace('[months_link]', months_link) \
+with open(path.join('static', 'pages', 'daily_page.html'), 'r') as f:
+    daily_page = f.read()
+
+daily_page = daily_page.replace('[daily_route]', daily_route) \
+                       .replace('[months_link]', months_link)\
+                       .replace('[days_link]', days_link)\
+                       .replace('[hours_link]', hours_link)\
+                       .replace('[tasks_add_route]', tasks_add_route)
+
+daily_body = daily_page.format(year=_today.year,
+                               month=_today.month,
+                               day=_today.day,
+                               hour=_today.hour)
+
+main_page = main_page.replace('[daily_route]', daily_route) \
+                     .replace('[months_link]', months_link) \
                      .replace('[days_link]', days_link) \
                      .replace('[hours_link]', hours_link) \
                      .replace('[tasks_add_route]', tasks_add_route)
@@ -137,4 +152,3 @@ year_table = '''
 </table>'''.format(year_2018_link=year_2018_link,
                    year_2019_link=year_2019_link,
                    year_2020_link=year_2020_link)
-

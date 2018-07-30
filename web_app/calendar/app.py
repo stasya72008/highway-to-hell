@@ -2,7 +2,7 @@ from flask import Flask, request, redirect
 import config
 
 from helpers import gen_day_cell, gen_month_cell, gen_year_cell, \
-    border_items, set_parameters, pop_parameter
+    border_items, set_parameters, pop_parameter, gen_daily_cells
 from html_template import *
 from web_app.rest_client.client import create_task, delete_task, edit_task, \
     get_task_by_id
@@ -144,6 +144,13 @@ def page_of_hours(year_id, month_id, day_id):
                              prev_day=calendar['prev_d'],
                              next_day=calendar['next_d'],
                              table=gen_day_cell(year_id, month_id, day_id))
+
+
+@app.route(daily_route + '/', methods=['get'])
+@app.route(daily_route, methods=['get'])
+def daily_page():
+    set_parameters(base_url=request.base_url)
+    return daily_body.replace('{table}', gen_daily_cells())
 
 
 if __name__ == '__main__':
