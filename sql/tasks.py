@@ -4,6 +4,7 @@ from sql.entities import Task
 
 import config
 from constants import sql_engine, use_db_query
+from sql.helpers import entity_to_dict
 
 conf = config.DBConfig()
 
@@ -26,7 +27,8 @@ class SQLTasks:
         try:
             session.add(task)
             session.commit()
-            return session.query(Task).filter_by(id=task.id).first()
+            query = session.query(Task).filter_by(id=task.id).first()
+            return entity_to_dict(query)
         except:
             session.rollback()
             raise
@@ -44,6 +46,8 @@ class SQLTasks:
             if calendar_date:
                 task.calendar_date = calendar_date
             session.commit()
+            query = session.query(Task).filter_by(id=task.id).first()
+            return entity_to_dict(query)
         except:
             session.rollback()
             raise
@@ -64,7 +68,8 @@ class SQLTasks:
     def get_task(self, task_id):
         session = self.Session()
         try:
-            return session.query(Task).filter_by(id=task_id).first()
+            query = session.query(Task).filter_by(id=task_id).first()
+            return entity_to_dict(query)
         except:
             raise
         finally:
@@ -73,7 +78,8 @@ class SQLTasks:
     def get_all_user_tasks(self, user_id):
         session = self.Session()
         try:
-            return session.query(Task).filter_by(user_id=user_id).all()
+            query = session.query(Task).filter_by(user_id=user_id).all()
+            return entity_to_dict(query)
         except:
             raise
         finally:
@@ -82,8 +88,9 @@ class SQLTasks:
     def get_existing_user_tasks(self, user_id):
         session = self.Session()
         try:
-            return session.query(Task).filter_by(user_id=user_id).filter(
+            query = session.query(Task).filter_by(user_id=user_id).filter(
                 Task.status != 'deleted').all()
+            return entity_to_dict(query)
         except:
             raise
         finally:
@@ -92,8 +99,9 @@ class SQLTasks:
     def get_task_by_date(self, user_id, date):
         session = self.Session()
         try:
-            return session.query(Task).filter_by(user_id=user_id).filter(
+            query = session.query(Task).filter_by(user_id=user_id).filter(
                 Task.calendar_date == date).all()
+            return entity_to_dict(query)
         except:
             raise
         finally:
@@ -101,24 +109,14 @@ class SQLTasks:
 
     def get_tasks_for_period(self, user_id, year, month=None, day=None):
         session = self.Session()
-        selection_clause = str(year)
-        extraction_param = 'year'
-
-        if month:
-            extraction_param = 'year_month'
-            month = str(month)
-            if len(month) == 1:
-                month = '0{}'.format(month)
-            selection_clause += month
         try:
             query = session.query(Task).filter_by(user_id=user_id).filter(
-                    extract(extraction_param,
-                            Task.calendar_date) == selection_clause)
-            if not day:
-                return query.all()
-            else:
-                return query.filter(
-                    extract('day', Task.calendar_date) == day).all()
+                        extract('year', Task.calendar_date) == year,
+                        True if month is None else
+                        (extract('month', Task.calendar_date) == month),
+                        True if day is None else
+                        (extract('day', Task.calendar_date) == day)).all()
+            return entity_to_dict(query)
         except:
             raise
         finally:

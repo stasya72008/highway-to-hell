@@ -4,6 +4,7 @@ from sql.entities import User
 
 import config
 from constants import sql_engine, use_db_query
+from sql.helpers import entity_to_dict
 
 conf = config.DBConfig()
 
@@ -25,7 +26,8 @@ class SQLUsers:
         try:
             session.add(user)
             session.commit()
-            return session.query(User).filter_by(id=user.id).first()
+            query = session.query(User).filter_by(id=user.id).first()
+            return entity_to_dict(query)
         except:
             session.rollback()
             raise
@@ -38,6 +40,8 @@ class SQLUsers:
             user = session.query(User).filter_by(id=user_id).first()
             user.name = user_name
             session.commit()
+            query = session.query(User).filter_by(id=user.id).first()
+            return entity_to_dict(query)
         except:
             session.rollback()
             raise
@@ -58,7 +62,18 @@ class SQLUsers:
     def get_user(self, user_id):
         session = self.Session()
         try:
-            return session.query(User).filter_by(id=user_id).first()
+            query = session.query(User).filter_by(id=user_id).first()
+            return entity_to_dict(query)
+        except:
+            raise
+        finally:
+            session.close()
+
+    def get_all_users(self):
+        session = self.Session()
+        try:
+            query = session.query(User).all()
+            return entity_to_dict(query)
         except:
             raise
         finally:
