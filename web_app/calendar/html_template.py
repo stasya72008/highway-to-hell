@@ -152,10 +152,3 @@ year_table = '''
 </table>'''.format(year_2018_link=year_2018_link,
                    year_2019_link=year_2019_link,
                    year_2020_link=year_2020_link)
-
-# ================ DAILY ========================
-
-task_cell = '''
-<tr bgcolor="#F0E68C">
-        <th width=100%>{task_name}</th>
-</tr>'''
