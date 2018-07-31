@@ -1,78 +1,75 @@
 from flask import Flask, render_template
-from os import path
 import json
 import config
 
 from flask import request
 
+from sql.tasks import SQLTasks
+from sql.users import SQLUsers
+
 app = Flask(__name__)
 
 
-data_dir = path.join(path.dirname(__file__), 'data')
-users_data = path.join(data_dir, 'users.json')
-tasks_data = path.join(data_dir, 'tasks.json')
-
-with open(users_data, 'r') as f:
-    users = json.loads(f.read())
-
-with open(tasks_data, 'r') as f:
-    tasks = json.loads(f.read())
-
 config = config.RestConfig()
+sql_users = SQLUsers()
+sql_tasks = SQLTasks()
 
 
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html', users=users, tasks=tasks)
+    return render_template('index.html')
 
 
 @app.route('/users', methods=['GET'])
 def get_users():
-    return json.dumps(users)
+    return json.dumps(sql_users.get_all_users())
 
 
 @app.route('/users', methods=['POST'])
 def add_user():
     user = json.loads(request.json)
-    users.append(user)
-    return render_template('index.html'), 201
+    user_name = user['name']
+    added_user = sql_users.add_user(user_name)
+    return json.dumps(added_user), 201
 
 
 @app.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    for user in users:
-        if user['id'] == user_id:
-            users.remove(user)
-            return render_template('index.html'), 201
-    return not_found(404)
+    sql_users.delete_user(user_id)
+    return render_template('index.html'), 204
 
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
-    for user in users:
-        if user['id'] == user_id:
-            return json.dumps(user)
+    user = sql_users.get_user(user_id)
+    if user:
+        return json.dumps(user)
     return not_found(404)
 
 
 @app.route('/users/<int:user_id>/tasks', methods=['GET'])
-def get_user_tasks(user_id, start='', end=''):
-    # ToDo(stasya): add request to database
-    user_tasks = list()
-    for task in tasks:
-        if task['user_id'] == user_id:
-            # SQL request for the given period
-            user_tasks.append(task)
-
-    return json.dumps(user_tasks)
+def get_user_tasks(user_id):
+    period = request.args
+    month = None
+    day = None
+    if period:
+        year = period['year']
+        if 'month' in period:
+            month = period['month']
+        if 'day' in period:
+            day = period['day']
+        user_tasks = sql_tasks.get_tasks_for_period(user_id, year, month, day)
+    else:
+        user_tasks = sql_tasks.get_all_user_tasks(user_id)
+    return json.dumps(user_tasks, default=str)
 
 
 @app.route('/tasks/<int:task_id>', methods=['GET'])
-def get_task(task_id):
-    for task in tasks:
-        if task['id'] == task_id:
-            return json.dumps(task)
+def get_task_by_id(task_id):
+    task = sql_tasks.get_task(task_id)
+    if task:
+        return json.dumps(task)
     return not_found(404)
 
 
@@ -81,27 +78,33 @@ def add_task():
     # ToDo(stasya) Add json validation
     # https://github.com/stasya72008/highway-to-hell/projects/2#card-11155844
     task = json.loads(request.json)
-    tasks.append(task)
-    return render_template('index.html'), 201
+    user_id = task['user_id']
+    name = task['name']
+    calendar_date = task['calendar_date']
+    added_task = sql_tasks.add_task(user_id, name, calendar_date)
+    return json.dumps(added_task, default=str), 201
 
 
 @app.route('/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
-    for task in tasks:
-        if task['id'] == task_id:
-            tasks.remove(task)
-            return render_template('index.html'), 200
-    return not_found(404)
+    sql_tasks.delete_task(task_id)
+    return render_template('index.html'), 204
 
 
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
 def update_task(task_id):
+    name = ''
+    status = None
+    calendar_date = None
     data = request.json
-    for task in tasks:
-        if task['id'] == task_id:
-            task.update(data)
-            return json.dumps(task)
-    return not_found(404)
+    if 'name' in data:
+        name = data['name']
+    if 'calendar_date' in data:
+        calendar_date = data['calendar_date']
+    if 'status' in data:
+        status = data['status']
+    updated_task = sql_tasks.update_task(task_id, name, status, calendar_date)
+    return json.dumps(updated_task, default=str)
 
 
 @app.route('/users/<int:user_id>/tasks/<int:task_id>/actions/<action>', methods=['POST'])

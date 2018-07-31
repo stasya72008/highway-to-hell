@@ -25,8 +25,7 @@ class Task(Base):
                     nullable=False, default='active')
     calendar_date = Column('Calendar_date', DATETIME)
 
-    def __init__(self, user_id, name, status, calendar_date):
+    def __init__(self, user_id, name, calendar_date):
         self.user_id = user_id
         self.name = name
-        self.status = status
         self.calendar_date = calendar_date

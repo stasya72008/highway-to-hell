@@ -21,9 +21,9 @@ class SQLTasks:
 
         self.Session = sessionmaker(bind=self.engine)
 
-    def add_task(self, user_id, name, status=None, calendar_date=None):
+    def add_task(self, user_id, name, calendar_date=None):
         session = self.Session()
-        task = Task(user_id, name, status, calendar_date)
+        task = Task(user_id, name, calendar_date)
         try:
             session.add(task)
             session.commit()
@@ -90,17 +90,6 @@ class SQLTasks:
         try:
             query = session.query(Task).filter_by(user_id=user_id).filter(
                 Task.status != 'deleted').all()
-            return entity_to_dict(query)
-        except:
-            raise
-        finally:
-            session.close()
-
-    def get_task_by_date(self, user_id, date):
-        session = self.Session()
-        try:
-            query = session.query(Task).filter_by(user_id=user_id).filter(
-                Task.calendar_date == date).all()
             return entity_to_dict(query)
         except:
             raise
