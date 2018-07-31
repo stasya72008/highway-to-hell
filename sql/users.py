@@ -26,8 +26,8 @@ class SQLUsers:
         try:
             session.add(user)
             session.commit()
-            query = session.query(User).filter_by(id=user.id).first()
-            return entity_to_dict(query)
+            session.refresh(user)
+            return entity_to_dict(user)
         except:
             session.rollback()
             raise
@@ -40,8 +40,8 @@ class SQLUsers:
             user = session.query(User).filter_by(id=user_id).first()
             user.name = user_name
             session.commit()
-            query = session.query(User).filter_by(id=user.id).first()
-            return entity_to_dict(query)
+            session.refresh(user)
+            return entity_to_dict(user)
         except:
             session.rollback()
             raise

@@ -27,8 +27,8 @@ class SQLTasks:
         try:
             session.add(task)
             session.commit()
-            query = session.query(Task).filter_by(id=task.id).first()
-            return entity_to_dict(query)
+            session.refresh(task)
+            return entity_to_dict(task)
         except:
             session.rollback()
             raise
@@ -46,8 +46,8 @@ class SQLTasks:
             if calendar_date:
                 task.calendar_date = calendar_date
             session.commit()
-            query = session.query(Task).filter_by(id=task.id).first()
-            return entity_to_dict(query)
+            session.refresh(task)
+            return entity_to_dict(task)
         except:
             session.rollback()
             raise
