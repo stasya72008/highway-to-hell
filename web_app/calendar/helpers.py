@@ -9,7 +9,9 @@ with open('date_template.json', 'r') as f:
 
 
 # Get / Set Headers
+# ToDo(den) create dict with parameters
 _global_url_for_redirect = tasks_add_route
+user_id = 3
 
 
 def set_parameters(base_url):
@@ -132,8 +134,8 @@ def gen_day_cell(year, month, day):
     return full_day
 
 
-def gen_daily_cells():
-    tasks = get_daily_tasks()
+def gen_daily_cells(user_id):
+    tasks = get_daily_tasks(user_id)
     task_line = ''
     for task in tasks:
         if task.get('status') == 'done':
@@ -145,10 +147,9 @@ def gen_daily_cells():
     return task_line
 
 
-def get_daily_tasks():
-    tasks = get_all_user_tasks(user_id=1)
+def get_daily_tasks(user_id):
+    tasks = get_all_user_tasks(user_id)
     tasks = [task for task in tasks if
-             task.get('calendar_date') == "" and
              task.get('status') in ('active', 'done')]
 
     return tasks
@@ -163,11 +164,15 @@ def get_tasks_for_period(*args):
     """
 
     # ToDo(den) get user_id from header or cookies request
-    tasks = get_all_user_tasks(user_id=1)
-
-    period = '|'.join([str(arg) for arg in args])
+    tasks = get_all_user_tasks(user_id)
+    if len(args) == 4:
+        period = '{} {}'.format('-'.join(["%02d" % p for p in args[:-1]]),
+                                "%02d" % args[-1])
+    else:
+        period = '-'.join(["%02d" % x for x in args])
 
     tasks = [task for task in tasks if
+             task.get('calendar_date') is not None and
              task.get('calendar_date').startswith(period) and
              task.get('status') in ('active', 'done')]
 

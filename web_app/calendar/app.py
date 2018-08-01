@@ -2,7 +2,7 @@ from flask import Flask, request, redirect
 import config
 
 from helpers import gen_day_cell, gen_month_cell, gen_year_cell, \
-    border_items, set_parameters, pop_parameter, gen_daily_cells
+    border_items, set_parameters, pop_parameter, gen_daily_cells, user_id
 from html_template import *
 from web_app.rest_client.client import create_task, delete_task, edit_task, \
     get_task_by_id
@@ -37,7 +37,7 @@ def tasks_creator():
         calendar_date = ''
 
     # ToDo(den) get user_id from header (global dict...(= )
-    create_task(user_id=1,
+    create_task(user_id=user_id,
                 task_name=request.form.get('task_title'),
                 calendar_date=calendar_date)
     # ToDo(den) check return status
@@ -150,7 +150,7 @@ def page_of_hours(year_id, month_id, day_id):
 @app.route(daily_route, methods=['get'])
 def daily_page():
     set_parameters(base_url=request.base_url)
-    return daily_body.replace('{table}', gen_daily_cells())
+    return daily_body.replace('{table}', gen_daily_cells(user_id))
 
 
 if __name__ == '__main__':

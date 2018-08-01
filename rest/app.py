@@ -70,7 +70,7 @@ def get_user_tasks(user_id):
 @app.route('/tasks/<int:task_id>', methods=['GET'])
 def get_task_by_id(task_id):
     task = sql_tasks.get_task(task_id)
-    return json.dumps(task) if task else not_found(404)
+    return json.dumps(task, default=str) if task else not_found(404)
 
 
 @app.route('/tasks', methods=['POST'])
