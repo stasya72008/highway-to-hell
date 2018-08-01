@@ -43,22 +43,25 @@ def delete_user(user_id):
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     user = sql_users.get_user(user_id)
-    if user:
-        return json.dumps(user)
-    return not_found(404)
+    return json.dumps(user) if user else not_found(404)
 
 
 @app.route('/users/<int:user_id>/tasks', methods=['GET'])
 def get_user_tasks(user_id):
+    """
+    Get tasks for user with specified ID.
+    Request args may be:
+    empty - returns all user tasks
+    period (in format year, [month], [day]) - return user tasks in accordance
+    with this criteria
+
+    :return: list of user tasks for the given period or all of the tasks
+    """
     period = request.args
-    month = None
-    day = None
     if period:
         year = period['year']
-        if 'month' in period:
-            month = period['month']
-        if 'day' in period:
-            day = period['day']
+        month = period.get('month', None)
+        day = period.get('day', None)
         user_tasks = sql_tasks.get_tasks_for_period(user_id, year, month, day)
     else:
         user_tasks = sql_tasks.get_all_user_tasks(user_id)
@@ -68,9 +71,7 @@ def get_user_tasks(user_id):
 @app.route('/tasks/<int:task_id>', methods=['GET'])
 def get_task_by_id(task_id):
     task = sql_tasks.get_task(task_id)
-    if task:
-        return json.dumps(task)
-    return not_found(404)
+    return json.dumps(task) if task else not_found(404)
 
 
 @app.route('/tasks', methods=['POST'])
@@ -93,16 +94,10 @@ def delete_task(task_id):
 
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
 def update_task(task_id):
-    name = ''
-    status = None
-    calendar_date = None
     data = request.json
-    if 'name' in data:
-        name = data['name']
-    if 'calendar_date' in data:
-        calendar_date = data['calendar_date']
-    if 'status' in data:
-        status = data['status']
+    name = data.get('name', '')
+    calendar_date = data.get('calendar_date', None)
+    status = data.get('status', None)
     updated_task = sql_tasks.update_task(task_id, name, status, calendar_date)
     return json.dumps(updated_task, default=str)
 

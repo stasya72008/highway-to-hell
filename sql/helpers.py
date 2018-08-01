@@ -1,4 +1,7 @@
 def entity_to_dict(query_result):
+    if query_result is None:
+        return dict()
+
     if isinstance(query_result, list):
         result = []
         for row in query_result:

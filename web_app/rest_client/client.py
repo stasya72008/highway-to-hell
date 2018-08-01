@@ -36,7 +36,6 @@ def create_task(user_id, task_name, calendar_date=None):
     task['user_id'] = user_id
     task['name'] = task_name
     task['calendar_date'] = calendar_date
-    task['id'] = random.randint(10, 1000000)
     return requests.post(tasks_url, json=json.dumps(task))
 
 
