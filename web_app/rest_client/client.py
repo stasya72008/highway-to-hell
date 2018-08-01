@@ -30,12 +30,11 @@ def get_tasks_for_period(user_id, year=None, month=None, day=None):
 
 
 def create_task(user_id, task_name, calendar_date=None):
-    task = dict()
+    task = {'user_id': user_id,
+            'name': task_name,
+            'calendar_date': calendar_date}
     # ToDo(den) move user_id to init class rest_client after
     # https://github.com/stasya72008/highway-to-hell/projects/2#card-11180275
-    task['user_id'] = user_id
-    task['name'] = task_name
-    task['calendar_date'] = calendar_date
     return requests.post(tasks_url, json=json.dumps(task))
 
 

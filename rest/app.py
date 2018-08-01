@@ -29,8 +29,7 @@ def get_users():
 @app.route('/users', methods=['POST'])
 def add_user():
     user = json.loads(request.json)
-    user_name = user['name']
-    added_user = sql_users.add_user(user_name)
+    added_user = sql_users.add_user(user['name'])
     return json.dumps(added_user), 201
 
 
@@ -79,10 +78,8 @@ def add_task():
     # ToDo(stasya) Add json validation
     # https://github.com/stasya72008/highway-to-hell/projects/2#card-11155844
     task = json.loads(request.json)
-    user_id = task['user_id']
-    name = task['name']
-    calendar_date = task['calendar_date']
-    added_task = sql_tasks.add_task(user_id, name, calendar_date)
+    added_task = sql_tasks.add_task(task['user_id'], task['name'],
+                                    task['calendar_date'])
     return json.dumps(added_task, default=str), 201
 
 
