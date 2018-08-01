@@ -23,21 +23,18 @@ def get_task_by_id(task_id):
     return json.loads(resp.text)
 
 
-def get_tasks_for_period(user_id, start, end):
-    # ToDo(den) change logic for period
-    period = {'start': start, 'end': end}
+def get_tasks_for_period(user_id, year=None, month=None, day=None):
+    period = {'year': year, 'month': month, 'day': day}
     resp = requests.get(user_tasks.format(user_id=user_id), params=period)
     return json.loads(resp.text)
 
 
-def create_task(user_id, task_name, calendar_date=''):
-    task = template.task
+def create_task(user_id, task_name, calendar_date=None):
+    task = {'user_id': user_id,
+            'name': task_name,
+            'calendar_date': calendar_date}
     # ToDo(den) move user_id to init class rest_client after
     # https://github.com/stasya72008/highway-to-hell/projects/2#card-11180275
-    task['user_id'] = user_id
-    task['name'] = task_name
-    task['calendar_date'] = calendar_date
-    task['id'] = random.randint(10, 1000000)
     return requests.post(tasks_url, json=json.dumps(task))
 
 
