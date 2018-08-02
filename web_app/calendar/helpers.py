@@ -10,6 +10,8 @@ with open('date_template.json', 'r') as f:
 
 # Get / Set Headers
 # ToDo(den) create dict with parameters
+# ToDo(den) Will do something this it !!!
+# https://github.com/stasya72008/highway-to-hell/projects/2#card-11882791
 _global_url_for_redirect = tasks_add_route
 user_id = 3
 
