@@ -1,25 +1,15 @@
-from sqlalchemy import create_engine, extract
-from sqlalchemy.orm import sessionmaker
 from sql.entities import Task
+from sql.helpers import entity_to_dict
+from sql.driver import SQlDriver
 
 import config
-from constants import sql_engine, use_db_query
-from sql.helpers import entity_to_dict
-
 conf = config.DBConfig()
 
 
 #Todo(stasya) add logging to except blocks
-class SQLTasks:
+class SQLTasks(SQlDriver):
     def __init__(self):
-        self.engine = create_engine(sql_engine.format(
-            user=conf.user, password=conf.password, host=conf.host,
-            port=conf.port), pool_size=2)
-
-        with self.engine.begin() as conn:
-            conn.execute(use_db_query)
-
-        self.Session = sessionmaker(bind=self.engine)
+        SQlDriver.__init__(self)
 
     def add_task(self, user_id, name, calendar_date=None):
         session = self.Session()
