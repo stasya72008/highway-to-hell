@@ -13,14 +13,17 @@ cursor.execute(query)
 query = 'USE highway'
 cursor.execute(query)
 
-query = 'CREATE table users (' \
+query = "show tables"
+cursor.execute(query)
+
+query = 'CREATE table IF NOT EXISTS users (' \
         'ID int AUTO_INCREMENT, ' \
         'Username varchar(255) NOT NULL,' \
         'PRIMARY KEY (ID)' \
         ')'
 cursor.execute(query)
 
-query = "CREATE table tasks (" \
+query = "CREATE table IF NOT EXISTS tasks (" \
         "ID int AUTO_INCREMENT, " \
         "UserID int NOT NULL," \
         "Name varchar(255) NOT NULL," \
