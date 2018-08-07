@@ -1,4 +1,7 @@
-touch /home/den/Documents/myip.log;
+. /home/develop/source.rc
 
-echo '#' `date` >> /home/den/Documents/myip.log ;
-curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//' >>/home/den/Documents/myip.log
+touch $FILE_LOG_MYIP;
+
+echo '#' `date` >> $FILE_LOG_MYIP;
+curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//' >> $FILE_LOG_MYIP;
+
