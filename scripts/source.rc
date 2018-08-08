@@ -1,5 +1,4 @@
-#MAILS="wwwouser@gmail.com"
-MAILS="wwwouser@gmail.com, balakhovskastanislava@gmail.com"
+MAILS=""
 
 FILE_LOG_SEND_MAIL="/var/log/send_mail.log"
 FILE_LOG_MYIP="/var/log/myip.log"
