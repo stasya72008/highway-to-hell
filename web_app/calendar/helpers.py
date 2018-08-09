@@ -26,6 +26,10 @@ def pop_parameter():
     url_for_redirect = _global_url_for_redirect
     _global_url_for_redirect = tasks_add_route
     return url_for_redirect
+
+
+def get_parameter():
+    return _global_url_for_redirect
 # Get / Set Headers
 
 

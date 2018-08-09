@@ -2,7 +2,8 @@ from flask import Flask, request, redirect
 import config
 
 from helpers import gen_day_cell, gen_month_cell, gen_year_cell, \
-    border_items, set_parameters, pop_parameter, gen_daily_cells, user_id
+    border_items, set_parameters, pop_parameter, get_parameter, \
+    gen_daily_cells, user_id
 from html_template import *
 from web_app.rest_client.client import create_task, delete_task, edit_task, \
     get_task_by_id
@@ -17,12 +18,14 @@ config = config.CalendarConfig()
 @app.route(tasks_add_route, methods=['get'])
 def tasks_add():
     _today = datetime.datetime.now()
+    url_for_redirect = get_parameter()
 
     form = task_preset_form.format(
         year=request.args.get('y', _today.year),
         month=request.args.get('m', _today.month),
         day=request.args.get('d', _today.day),
-        hour=request.args.get('h', _today.hour))
+        hour=request.args.get('h', _today.hour),
+        redirect=url_for_redirect)
     return form
 
 
