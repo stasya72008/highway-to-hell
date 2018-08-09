@@ -1,14 +1,13 @@
 import requests
 import json
-import random
 
 import config
-import data.data_templates as template
 
 conf = config.RestEndpointConfig()
 
 base_url = 'http://{host}:{port}/'.format(host=conf.host, port=conf.port)
 user_tasks = base_url + 'users/{user_id}/tasks'
+tasks_count = user_tasks + '/count'
 task_url = base_url + 'tasks/{task_id}'
 tasks_url = base_url + 'tasks'
 
@@ -26,6 +25,12 @@ def get_task_by_id(task_id):
 def get_tasks_for_period(user_id, year=None, month=None, day=None):
     period = {'year': year, 'month': month, 'day': day}
     resp = requests.get(user_tasks.format(user_id=user_id), params=period)
+    return json.loads(resp.text)
+
+
+def get_task_count_for_period(user_id, year, month=None):
+    period = {'year': year, 'month': month}
+    resp = requests.get(tasks_count.format(user_id=user_id), params=period)
     return json.loads(resp.text)
 
 
