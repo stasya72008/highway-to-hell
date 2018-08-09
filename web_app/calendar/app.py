@@ -102,7 +102,7 @@ def page_of_years():
 @app.route(months_route + '/', methods=['get'])
 @app.route(months_route, methods=['get'])
 def page_of_months(year_id):
-    set_parameters(base_url=request.base_url)
+    set_parameters(base_url=request.url)
 
     calendar = border_items(year_id)
     return gen_year_cell(year_id).format(year=year_id,
@@ -116,7 +116,7 @@ def page_of_months(year_id):
 @app.route(days_route + '/', methods=['get'])
 @app.route(days_route, methods=['get'])
 def page_of_days(year_id, month_id):
-    set_parameters(base_url=request.base_url)
+    set_parameters(base_url=request.url)
 
     calendar = border_items(year_id, month_id)
     return day_table.format(year=year_id,
@@ -134,7 +134,7 @@ def page_of_days(year_id, month_id):
 @app.route(hours_route + '/', methods=['get'])
 @app.route(hours_route, methods=['get'])
 def page_of_hours(year_id, month_id, day_id):
-    set_parameters(base_url=request.base_url)
+    set_parameters(base_url=request.url)
 
     calendar = border_items(year_id, month_id, day_id)
     return hour_table.format(year=year_id,
@@ -155,8 +155,12 @@ def page_of_hours(year_id, month_id, day_id):
 @app.route(daily_route + '/', methods=['get'])
 @app.route(daily_route, methods=['get'])
 def daily_page():
-    set_parameters(base_url=request.base_url)
-    return daily_body.replace('{table}', gen_daily_cells(user_id))
+    set_parameters(base_url=request.url)
+
+    archive = True if request.args.get('arch') == 'True' else False
+
+    return daily_body.format(table=gen_daily_cells(user_id, archive),
+                             archive=not archive)
 
 
 if __name__ == '__main__':

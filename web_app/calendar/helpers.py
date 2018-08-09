@@ -140,8 +140,15 @@ def gen_day_cell(year, month, day):
     return full_day
 
 
-def gen_daily_cells(user_id):
-    tasks = get_daily_tasks(user_id)
+def gen_daily_cells(user_id, archive=False):
+    if archive:
+        status = ('archive', )
+    else:
+        status = ('active', 'done')
+
+    tasks = [t for t in get_all_user_tasks(user_id)
+             if t.get('status') in status]
+
     task_line = ''
     for task in tasks:
         if task.get('status') == 'done':
@@ -151,14 +158,6 @@ def gen_daily_cells(user_id):
         task_line += t_cell_inner.format(task=task.get('id'),
                                          task_name=task_name)
     return task_line
-
-
-def get_daily_tasks(user_id):
-    tasks = get_all_user_tasks(user_id)
-    tasks = [task for task in tasks if
-             task.get('status') in ('active', 'done')]
-
-    return tasks
 
 
 # ToDo(den) move this logic to rest
