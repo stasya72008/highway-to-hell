@@ -26,6 +26,9 @@ def tasks_add():
         day=request.args.get('d', _today.day),
         hour=request.args.get('h', _today.hour),
         redirect=url_for_redirect)
+    # make calendar date hidden
+    if request.args.get('c', '1') == '0':
+        form = form.replace('checked="checked"', '')
     return form
 
 
