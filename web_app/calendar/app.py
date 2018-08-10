@@ -29,6 +29,9 @@ def tasks_add():
     # make calendar date hidden
     if request.args.get('c', '1') == '0':
         form = form.replace('checked="checked"', '')
+
+    # send request to tasks_creator
+    form = form.replace('[task_creator_link]', task_creator_link)
     return form
 
 
@@ -40,7 +43,7 @@ def tasks_creator():
                                   request.form.get('day'),
                                   request.form.get('hour')])
     else:
-        calendar_date = ''
+        calendar_date = None
 
     # ToDo(den) get user_id from header (global dict...(= )
     create_task(user_id=user_id,
@@ -49,6 +52,74 @@ def tasks_creator():
     # ToDo(den) check return status
     url_for_redirect = pop_parameter()
 
+    return redirect(url_for_redirect)
+
+
+@app.route(tasks_edit_route + '/', methods=['get'])
+@app.route(tasks_edit_route, methods=['get'])
+def tasks_edit(task_id):
+    task = get_task_by_id(task_id)
+    url_for_redirect = get_parameter()
+
+    if task.get('calendar_date') is not None:
+        obj_date = datetime.datetime.strptime(
+            task.get('calendar_date'), "%Y-%m-%d %H:%M:%S")
+    else:
+        obj_date = datetime.datetime.now()
+
+    form = task_preset_form.format(
+        year=obj_date.year,
+        month=obj_date.month,
+        day=obj_date.day,
+        hour=obj_date.hour,
+        redirect=url_for_redirect)
+
+    # make calendar date hidden
+    if task.get('calendar_date') is None:
+        form = form.replace('checked="checked"', '')
+
+    # set name of task
+    form = form.replace('</textarea>', task.get('name') + '</textarea>')
+    # set id of task
+    form = form.replace('[task_id]', str(task_id))
+    # send request to tasks_editor
+    form = form.replace('[task_creator_link]', task_editor_link)
+
+    return form
+
+
+@app.route(task_editor_link, methods=['post'])
+def tasks_editor():
+    task_id = request.form.get('task')
+    task = get_task_by_id(task_id)
+
+    calendar_date = None
+    if request.form.get('calendar') == 'on':
+        t_date = datetime.datetime.strptime(
+            task.get('calendar_date'), "%Y-%m-%d %H:%M:%S")
+
+        set_date = datetime.datetime(int(request.form.get('year')),
+                                     int(request.form.get('month')),
+                                     int(request.form.get('day')),
+                                     int(request.form.get('hour')))
+
+        if set_date != t_date:
+            calendar_date = set_date.strftime("%Y-%m-%d %H:%M:%S")
+    else:
+        # set zero date
+        calendar_date = '0|0|0|0'
+
+    task_name = None
+    if task.get('name') != request.form.get('task_title'):
+        task_name = request.form.get('task_title')
+
+    if task_name or calendar_date:
+        edit_task(task_id=task_id,
+                  task_name=task_name,
+                  calendar_date=calendar_date)
+
+    # ToDo(den) check return status
+    url_for_redirect = pop_parameter()
     return redirect(url_for_redirect)
 
 
@@ -66,10 +137,11 @@ def task_remover(task_id):
 # Close/ reopen task
 @app.route(tasks_close_reopen_route, methods=['get'])
 def tasks_close_reopen(task_id):
+    status = get_task_by_id(task_id)['status']
 
-    if get_task_by_id(task_id)['status'] == 'active':
+    if status == 'active':
         edit_task(task_id, status='done')
-    elif get_task_by_id(task_id)['status'] == 'done':
+    elif status == 'done':
         edit_task(task_id, status='active')
     else:
         # ToDo(den) return error for invalid status

@@ -25,6 +25,7 @@ year_2020_link = years_route + '/2020/months'
 
 tasks_add_route = '/tasks'
 task_creator_link = '/task_creator'
+task_editor_link = '/task_editor'
 
 tasks_delete_route = '/tasks/<int:task_id>/delete'
 tasks_edit_route = '/tasks/<int:task_id>/edit'
