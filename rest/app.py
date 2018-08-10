@@ -72,11 +72,12 @@ def get_task_counts_for_period(user_id):
     period = request.args
     year = period['year']
     month = period.get('month', None)
-    if not month:
-        tasks_count = sql_tasks.get_tasks_counts_for_year(user_id, year)
+    if month:
+        tasks_count = sql_tasks.get_tasks_counts_for_month(
+            user_id, year, month)
     else:
-        tasks_count = sql_tasks.get_tasks_counts_for_month(user_id, year, month)
-    tasks_count = dict((date, count) for date, count in tasks_count)
+        tasks_count = sql_tasks.get_tasks_counts_for_year(user_id, year)
+    tasks_count = {date: count for date, count in tasks_count}
     return json.dumps(tasks_count)
 
 

@@ -1,5 +1,6 @@
 from sqlalchemy import extract
 from sqlalchemy import func
+from sqlalchemy import or_
 
 from sql.entities import Task
 from sql.helpers import entity_to_dict
@@ -109,8 +110,9 @@ class SQLTasks(SQlDriver):
         try:
             query = session.query(
                 func.month(Task.calendar_date), func.count(Task.calendar_date))\
-                .filter_by(user_id=user_id).filter(
-                        extract('year', Task.calendar_date) == year)\
+                .filter_by(user_id=user_id)\
+                .filter(extract('year', Task.calendar_date) == year)\
+                .filter(or_(Task.status == 'active', Task.status == 'done'))\
                 .group_by(func.month(Task.calendar_date)).all()
             return query
         except:
@@ -125,7 +127,8 @@ class SQLTasks(SQlDriver):
                 func.day(Task.calendar_date), func.count(Task.calendar_date))\
                 .filter_by(user_id=user_id).filter(
                         extract('year', Task.calendar_date) == year,
-                        extract('month', Task.calendar_date) == month)\
+                        extract('month', Task.calendar_date) == month) \
+                .filter(or_(Task.status == 'active', Task.status == 'done')) \
                 .group_by(func.day(Task.calendar_date)).all()
             return query
         except:
