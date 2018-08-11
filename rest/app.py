@@ -67,6 +67,20 @@ def get_user_tasks(user_id):
     return json.dumps(user_tasks, default=str)
 
 
+@app.route('/users/<int:user_id>/tasks/count', methods=['GET'])
+def get_task_counts_for_period(user_id):
+    period = request.args
+    year = period['year']
+    month = period.get('month', None)
+    if month:
+        tasks_count = sql_tasks.get_tasks_counts_for_month(
+            user_id, year, month)
+    else:
+        tasks_count = sql_tasks.get_tasks_counts_for_year(user_id, year)
+    tasks_count = {date: count for date, count in tasks_count}
+    return json.dumps(tasks_count)
+
+
 @app.route('/tasks/<int:task_id>', methods=['GET'])
 def get_task_by_id(task_id):
     task = sql_tasks.get_task(task_id)

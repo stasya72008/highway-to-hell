@@ -1,3 +1,7 @@
+from sqlalchemy import extract
+from sqlalchemy import func
+from sqlalchemy import or_
+
 from sql.entities import Task
 from sql.helpers import entity_to_dict
 from sql.driver import SQlDriver
@@ -96,6 +100,37 @@ class SQLTasks(SQlDriver):
                         True if day is None else
                         (extract('day', Task.calendar_date) == day)).all()
             return entity_to_dict(query)
+        except:
+            raise
+        finally:
+            session.close()
+
+    def get_tasks_counts_for_year(self, user_id, year):
+        session = self.Session()
+        try:
+            query = session.query(
+                func.month(Task.calendar_date), func.count(Task.calendar_date))\
+                .filter_by(user_id=user_id)\
+                .filter(extract('year', Task.calendar_date) == year)\
+                .filter(or_(Task.status == 'active', Task.status == 'done'))\
+                .group_by(func.month(Task.calendar_date)).all()
+            return query
+        except:
+            raise
+        finally:
+            session.close()
+
+    def get_tasks_counts_for_month(self, user_id, year, month):
+        session = self.Session()
+        try:
+            query = session.query(
+                func.day(Task.calendar_date), func.count(Task.calendar_date))\
+                .filter_by(user_id=user_id).filter(
+                        extract('year', Task.calendar_date) == year,
+                        extract('month', Task.calendar_date) == month) \
+                .filter(or_(Task.status == 'active', Task.status == 'done')) \
+                .group_by(func.day(Task.calendar_date)).all()
+            return query
         except:
             raise
         finally:
