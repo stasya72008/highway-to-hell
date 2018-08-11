@@ -13,6 +13,7 @@ app = Flask(__name__)
 config = config.CalendarConfig()
 
 
+# ------------ TASK ------------------
 # Create task
 @app.route(tasks_add_route + '/', methods=['get'])
 @app.route(tasks_add_route, methods=['get'])
@@ -168,6 +169,7 @@ def tasks_archive(task_id):
     return redirect(url_for_redirect)
 
 
+# ------------ PAGES ------------------
 # deprecated
 @app.route(years_route + '/', methods=['get'])
 @app.route(years_route, methods=['get'])
@@ -181,12 +183,13 @@ def page_of_months(year_id):
     set_parameters(base_url=request.url)
 
     calendar = border_items(year_id)
-    return gen_year_cell(year_id).format(year=year_id,
-                                         current_item=year_id,
-                                         prev_item=calendar['prev_y'],
-                                         next_item=calendar['next_y'],
-                                         prev_year=calendar['prev_y'],
-                                         next_year=calendar['next_y'])
+    return gen_year_cell(user_id, year_id).format(
+        year=year_id,
+        current_item=year_id,
+        prev_item=calendar['prev_y'],
+        next_item=calendar['next_y'],
+        prev_year=calendar['prev_y'],
+        next_year=calendar['next_y'])
 
 
 @app.route(days_route + '/', methods=['get'])
