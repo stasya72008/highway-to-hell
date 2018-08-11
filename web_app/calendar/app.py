@@ -2,7 +2,8 @@ from flask import Flask, request, redirect
 import config
 
 from helpers import gen_day_cell, gen_month_cell, gen_year_cell, \
-    border_items, set_parameters, pop_parameter, gen_daily_cells, user_id
+    border_items, set_parameters, pop_parameter, get_parameter, \
+    gen_daily_cells, user_id
 from html_template import *
 from web_app.rest_client.client import create_task, delete_task, edit_task, \
     get_task_by_id
@@ -17,24 +18,33 @@ config = config.CalendarConfig()
 @app.route(tasks_add_route, methods=['get'])
 def tasks_add():
     _today = datetime.datetime.now()
+    url_for_redirect = get_parameter()
 
     form = task_preset_form.format(
         year=request.args.get('y', _today.year),
         month=request.args.get('m', _today.month),
         day=request.args.get('d', _today.day),
-        hour=request.args.get('h', _today.hour))
+        hour=request.args.get('h', _today.hour),
+        redirect=url_for_redirect)
+    # make calendar date hidden
+    if request.args.get('calendar', '1') == '0':
+        form = form.replace('checked="checked"', '')
+
+    # send request to tasks_creator
+    form = form.replace('[task_creator_link]', task_creator_link)
     return form
 
 
 @app.route(task_creator_link, methods=['post'])
 def tasks_creator():
     if request.form.get('calendar') == 'on':
-        calendar_date = '|'.join([request.form.get('year'),
-                                  request.form.get('month'),
-                                  request.form.get('day'),
-                                  request.form.get('hour')])
+        calendar_date = datetime.datetime(int(request.form.get('year')),
+                                          int(request.form.get('month')),
+                                          int(request.form.get('day')),
+                                          int(request.form.get('hour'))) \
+            .strftime("%Y-%m-%d %H:%M:%S")
     else:
-        calendar_date = ''
+        calendar_date = None
 
     # ToDo(den) get user_id from header (global dict...(= )
     create_task(user_id=user_id,
@@ -43,6 +53,77 @@ def tasks_creator():
     # ToDo(den) check return status
     url_for_redirect = pop_parameter()
 
+    return redirect(url_for_redirect)
+
+
+@app.route(tasks_edit_route + '/', methods=['get'])
+@app.route(tasks_edit_route, methods=['get'])
+def tasks_edit(task_id):
+    task = get_task_by_id(task_id)
+    url_for_redirect = get_parameter()
+
+    if task.get('calendar_date') is not None:
+        obj_date = datetime.datetime.strptime(
+            task.get('calendar_date'), "%Y-%m-%d %H:%M:%S")
+    else:
+        obj_date = datetime.datetime.now()
+
+    form = task_preset_form.format(
+        year=obj_date.year,
+        month=obj_date.month,
+        day=obj_date.day,
+        hour=obj_date.hour,
+        redirect=url_for_redirect)
+
+    # make calendar date hidden
+    if task.get('calendar_date') is None:
+        form = form.replace('checked="checked"', '')
+
+    # set name of task
+    form = form.replace('</textarea>', task.get('name') + '</textarea>')
+    # set id of task
+    form = form.replace('[task_id]', str(task_id))
+    # send request to tasks_editor
+    form = form.replace('[task_creator_link]', task_editor_link)
+
+    return form
+
+
+@app.route(task_editor_link, methods=['post'])
+def tasks_editor():
+    task_id = request.form.get('task')
+    task = get_task_by_id(task_id)
+
+    calendar_date = None
+    if request.form.get('calendar') == 'on':
+        set_date = datetime.datetime(int(request.form.get('year')),
+                                     int(request.form.get('month')),
+                                     int(request.form.get('day')),
+                                     int(request.form.get('hour')))
+
+        if task.get('calendar_date') is not None:
+            t_date = datetime.datetime.strptime(
+                task.get('calendar_date'), "%Y-%m-%d %H:%M:%S")
+
+            if set_date != t_date:
+                calendar_date = set_date.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            calendar_date = set_date.strftime("%Y-%m-%d %H:%M:%S")
+
+    elif task.get('calendar_date'):
+        calendar_date = '0000-00-00 00:00:00'
+
+    task_name = None
+    if task.get('name') != request.form.get('task_title'):
+        task_name = request.form.get('task_title')
+
+    if task_name or calendar_date:
+        edit_task(task_id=task_id,
+                  task_name=task_name,
+                  calendar_date=calendar_date)
+
+    # ToDo(den) check return status
+    url_for_redirect = pop_parameter()
     return redirect(url_for_redirect)
 
 
@@ -60,10 +141,11 @@ def task_remover(task_id):
 # Close/ reopen task
 @app.route(tasks_close_reopen_route, methods=['get'])
 def tasks_close_reopen(task_id):
+    status = get_task_by_id(task_id)['status']
 
-    if get_task_by_id(task_id)['status'] == 'active':
+    if status == 'active':
         edit_task(task_id, status='done')
-    elif get_task_by_id(task_id)['status'] == 'done':
+    elif status == 'done':
         edit_task(task_id, status='active')
     else:
         # ToDo(den) return error for invalid status
@@ -96,7 +178,7 @@ def page_of_years():
 @app.route(months_route + '/', methods=['get'])
 @app.route(months_route, methods=['get'])
 def page_of_months(year_id):
-    set_parameters(base_url=request.base_url)
+    set_parameters(base_url=request.url)
 
     calendar = border_items(year_id)
     return gen_year_cell(year_id).format(year=year_id,
@@ -110,7 +192,7 @@ def page_of_months(year_id):
 @app.route(days_route + '/', methods=['get'])
 @app.route(days_route, methods=['get'])
 def page_of_days(year_id, month_id):
-    set_parameters(base_url=request.base_url)
+    set_parameters(base_url=request.url)
 
     calendar = border_items(year_id, month_id)
     return day_table.format(year=year_id,
@@ -128,7 +210,7 @@ def page_of_days(year_id, month_id):
 @app.route(hours_route + '/', methods=['get'])
 @app.route(hours_route, methods=['get'])
 def page_of_hours(year_id, month_id, day_id):
-    set_parameters(base_url=request.base_url)
+    set_parameters(base_url=request.url)
 
     calendar = border_items(year_id, month_id, day_id)
     return hour_table.format(year=year_id,
@@ -149,8 +231,12 @@ def page_of_hours(year_id, month_id, day_id):
 @app.route(daily_route + '/', methods=['get'])
 @app.route(daily_route, methods=['get'])
 def daily_page():
-    set_parameters(base_url=request.base_url)
-    return daily_body.replace('{table}', gen_daily_cells(user_id))
+    set_parameters(base_url=request.url)
+
+    archive = True if request.args.get('archive') == 'True' else False
+
+    return daily_body.format(table=gen_daily_cells(user_id, archive),
+                             archive=not archive)
 
 
 if __name__ == '__main__':

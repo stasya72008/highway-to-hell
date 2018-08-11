@@ -2,30 +2,30 @@
 <html>
 <head>
     <style>
-        table, th, td {{border: 1px solid black; collapse;}}
-        a {{
+        table, th, td {{{{border: 1px solid black; collapse;}}}}
+        a {{{{
             text-decoration: none; color: black;
-        }}
-        td.icon-cell {{
+        }}}}
+        td.icon-cell {{{{
             width: 22px;
             vertical-align: middle;
-        }}
-        img.icon {{
+        }}}}
+        img.icon {{{{
             width: 20px;
             height: 20px;
-        }}
+        }}}}
     </style>
 </head>
 <body>
 <table style="width:50%">
     <tr>
-        <th><a href="[daily_route]">Daily</a></th>
+        <th><a href="[daily_route]?archive={{archive}}">Daily</a></th>
         <th bgcolor="#aaa">Calendar</th>
         <th><a href="[hours_link]">Today</a></th>
         <th><a href="[days_link]">Days</a></th>
         <th><a href="[months_link]">Months</a></th>
         <th class="icon-cell">
-<a href="[tasks_add_route]?y={year}&m={month}&d={day}&h={hour}">
+<a href="[tasks_add_route]?y={year}&m={month}&d={day}&h={hour}&calendar=0">
 <img src="/static/plus.png" alt="Create Task" title="Add" class="icon"></a>
         </th>
     </tr>

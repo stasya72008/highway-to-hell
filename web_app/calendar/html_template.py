@@ -7,8 +7,8 @@ _today = datetime.datetime.now()
 # ================ HTML ========================
 # year, month, day, hour
 
-with open(path.join('static', 'pages', 'task_creation_form.html'), 'r') as f:
-    task_preset_form = f.read().replace('[task_creator_link]', task_creator_link)
+with open(path.join('static', 'pages', 'task_form.html'), 'r') as f:
+    task_preset_form = f.read()
 
 with open(path.join('static', 'pages', 'calendar_page.html'), 'r') as f:
     main_page = f.read()
@@ -83,7 +83,7 @@ t_cell_inner = '''
 <img src="/static/done.png" alt="done" title="Close/Reopen" class="icon">
 </a></td>
  
-    <td class="icon-cell"><a href="">
+    <td class="icon-cell"><a href="[tasks_edit_link]">
 <img src="/static/edit.png" alt="edit" title="Edit" class="icon">
 </a></td> 
 
@@ -97,6 +97,7 @@ t_cell_inner = '''
 '''.replace('[tasks_delete_link]', tasks_delete_link)\
    .replace('[tasks_archive_link]', tasks_archive_link)\
    .replace('[tasks_close_reopen_link]', tasks_close_reopen_link)\
+   .replace('[tasks_edit_link]', tasks_edit_link)
 
 # ==================== DAY ===============
 
