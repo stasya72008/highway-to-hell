@@ -27,7 +27,7 @@ def tasks_add():
         hour=request.args.get('h', _today.hour),
         redirect=url_for_redirect)
     # make calendar date hidden
-    if request.args.get('c', '1') == '0':
+    if request.args.get('calendar', '1') == '0':
         form = form.replace('checked="checked"', '')
 
     # send request to tasks_creator
@@ -38,10 +38,11 @@ def tasks_add():
 @app.route(task_creator_link, methods=['post'])
 def tasks_creator():
     if request.form.get('calendar') == 'on':
-        calendar_date = '|'.join([request.form.get('year'),
-                                  request.form.get('month'),
-                                  request.form.get('day'),
-                                  request.form.get('hour')])
+        calendar_date = datetime.datetime(int(request.form.get('year')),
+                                          int(request.form.get('month')),
+                                          int(request.form.get('day')),
+                                          int(request.form.get('hour'))) \
+            .strftime("%Y-%m-%d %H:%M:%S")
     else:
         calendar_date = None
 
@@ -95,19 +96,22 @@ def tasks_editor():
 
     calendar_date = None
     if request.form.get('calendar') == 'on':
-        t_date = datetime.datetime.strptime(
-            task.get('calendar_date'), "%Y-%m-%d %H:%M:%S")
-
         set_date = datetime.datetime(int(request.form.get('year')),
                                      int(request.form.get('month')),
                                      int(request.form.get('day')),
                                      int(request.form.get('hour')))
 
-        if set_date != t_date:
+        if task.get('calendar_date') is not None:
+            t_date = datetime.datetime.strptime(
+                task.get('calendar_date'), "%Y-%m-%d %H:%M:%S")
+
+            if set_date != t_date:
+                calendar_date = set_date.strftime("%Y-%m-%d %H:%M:%S")
+        else:
             calendar_date = set_date.strftime("%Y-%m-%d %H:%M:%S")
-    else:
-        # set zero date
-        calendar_date = '0|0|0|0'
+
+    elif task.get('calendar_date'):
+        calendar_date = '0000-00-00 00:00:00'
 
     task_name = None
     if task.get('name') != request.form.get('task_title'):
@@ -229,7 +233,7 @@ def page_of_hours(year_id, month_id, day_id):
 def daily_page():
     set_parameters(base_url=request.url)
 
-    archive = True if request.args.get('arch') == 'True' else False
+    archive = True if request.args.get('archive') == 'True' else False
 
     return daily_body.format(table=gen_daily_cells(user_id, archive),
                              archive=not archive)
