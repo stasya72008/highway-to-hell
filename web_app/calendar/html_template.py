@@ -1,8 +1,8 @@
 from calendar_routes import *
-import datetime
+from datetime import datetime
 from os import path
 
-_today = datetime.datetime.now()
+_today = datetime.now()
 
 # ================ HTML ========================
 # year, month, day, hour
@@ -45,10 +45,6 @@ hour_table = body_html.replace('[current_link]', days_link)\
                       .replace('[next_link]', next_hours_link)
 
 # year, month, day, hour
-cell_add_task_link = '''
-<a href="{tasks_add_route}?y={{year}}&m={{month}}&d={{day}}&h={{hour}}"> 
-<img src="/static/plus.png" alt="Create Task" title="Add" class="icon"></a>
-'''.format(tasks_add_route=tasks_add_route)
 
 # bgcolor: #c9f1de - busy
 # hour
@@ -56,16 +52,21 @@ cell_add_task_link = '''
 # cell_add_task_link
 hour_cell_free = '''
 <tr>
-    <th width=60>{hour}</th>
-    <th colspan="3"> </th>
-    <th width=60>{cell_add_task_link}</th>
-</tr>'''
+    <th width=40>
+        <a href="[tasks_add_route]?y={year}&m={month}&d={day}&h={hour}">{hour}</a>
+    </th>
+    <th><a href="[tasks_add_route]?y={year}&m={month}&d={day}&h={hour}">
+                <div style="height:1em; display:inline-block"></div>
+        </a>
+    </th>
+</tr>'''.replace('[tasks_add_route]', tasks_add_route)
 hour_cell = '''
 <tr bgcolor="#c9f1de">
-        <th width=60>{hour}</th>
-        <th colspan="3">{task_name}</th>
-        <th width=60>{cell_add_task_link}</th>
-</tr>'''
+    <th width=40>
+        <a href="[tasks_add_route]?y={year}&m={month}&d={day}&h={hour}">{hour}</a>
+    </th>
+    <th>{task_name}</th>
+</tr>'''.replace('[tasks_add_route]', tasks_add_route)
 
 
 # ToDo(den) add links for done, edit, delete ...
@@ -79,10 +80,6 @@ t_cell_inner = '''
 <tr><td><a href="[tasks_close_reopen_link]" 
          title="Close/Reopen">{task_name}</a></td>
 
-    <td class="icon-cell"><a href="[tasks_close_reopen_link]">
-<img src="/static/done.png" alt="done" title="Close/Reopen" class="icon">
-</a></td>
- 
     <td class="icon-cell"><a href="[tasks_edit_link]">
 <img src="/static/edit.png" alt="edit" title="Edit" class="icon">
 </a></td> 

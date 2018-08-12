@@ -120,14 +120,9 @@ def gen_day_cell(year, month, day):
 
     tasks = get_tasks_for_period(user_id, year, month, day)
     for h_index in range(0, 24):
-        hour_tasks = [t for t in tasks if datetime.datetime.strptime(
+        hour_tasks = [t for t in tasks if datetime.strptime(
             t.get('calendar_date'), "%Y-%m-%d %H:%M:%S").hour == h_index and
             t.get('status') in ('active', 'done')]
-
-        cell = cell_add_task_link.format(year=year,
-                                         month=month,
-                                         day=day,
-                                         hour=h_index)
 
         if hour_tasks:
             task_line = ''
@@ -139,12 +134,17 @@ def gen_day_cell(year, month, day):
                 task_line += t_cell_inner.format(task=task.get('id'),
                                                  task_name=task_name)
             full_day += hour_cell.format(
-                hour=h_index,
                 task_name=t_table_inner.format(tasks=task_line),
-                cell_add_task_link=cell)
+                year=year,
+                month=month,
+                day=day,
+                hour=h_index)
         else:
-            full_day += hour_cell_free.format(hour=h_index,
-                                              cell_add_task_link=cell)
+            full_day += hour_cell_free.format(year=year,
+                                              month=month,
+                                              day=day,
+                                              hour=h_index)
+
     return full_day
 
 
