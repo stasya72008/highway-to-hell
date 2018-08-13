@@ -14,7 +14,6 @@ with open('date_template.json', 'r') as f:
 # ToDo(den) Will do something this it !!!
 # https://github.com/stasya72008/highway-to-hell/projects/2#card-11882791
 _global_url_for_redirect = tasks_add_route
-user_id = 3
 
 
 def set_parameters(base_url):
@@ -57,7 +56,7 @@ def gen_year_cell(user_id, year):
     return full_year
 
 
-def gen_month_cell(year, month):
+def gen_month_cell(user_id, year, month):
     week = copy(week_table)
     full_month = ''
 
@@ -115,7 +114,7 @@ def gen_month_cell(year, month):
     return full_month
 
 
-def gen_day_cell(year, month, day):
+def gen_day_cell(user_id, year, month, day):
     full_day = ''
 
     tasks = get_tasks_for_period(user_id, year, month, day)

@@ -1,22 +1,72 @@
-from flask import Flask, request, redirect
+import os
 import config
 
-from helpers import gen_day_cell, gen_month_cell, gen_year_cell, \
-    border_items, set_parameters, pop_parameter, get_parameter, \
-    gen_daily_cells, user_id
+from flask import Flask, flash, request, redirect, render_template, g, url_for
+from flask_login import LoginManager, login_user, login_required, \
+    logout_user, UserMixin, current_user
+
 from html_template import *
+from helpers import gen_day_cell, gen_month_cell, gen_year_cell, \
+    gen_daily_cells, border_items, \
+    set_parameters, pop_parameter, get_parameter
 from web_app.rest_client.client import create_task, delete_task, edit_task, \
-    get_task_by_id
+    get_task_by_id, get_users
+
 
 app = Flask(__name__)
+login_manager = LoginManager()
 
 config = config.CalendarConfig()
 
 
+# ------------ Login ------------------
+class UserLogin(UserMixin):
+    def __init__(self, id, name=None, password=None, admin=False):
+        self.id = id
+        self.name = name
+        self.password = password
+        self.is_admin = admin
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    # ToDo probably better get user from DB
+    return UserLogin(user_id)
+
+
+@app.after_request
+def redirect_to_signing(response):
+    return redirect('/login') if response.status_code == 401 else response
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == 'POST':
+        # ToDo(den) Add password
+        user = [u for u in get_users() if
+                u['name'] == request.form['username']]
+        if user:
+            flash("Logged In!")
+            login_user(UserLogin(id=user[0]['id'], name=user[0]['name']))
+            return daily_page()
+        else:
+            flash('wrong password!')
+            return render_template('login.html')
+    else:
+        return render_template('login.html')
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return render_template('login.html')
+
+
 # ------------ TASK ------------------
-# Create task
 @app.route(tasks_add_route + '/', methods=['get'])
 @app.route(tasks_add_route, methods=['get'])
+@login_required
 def tasks_add():
     _today = datetime.now()
     url_for_redirect = get_parameter()
@@ -37,6 +87,7 @@ def tasks_add():
 
 
 @app.route(task_creator_link, methods=['post'])
+@login_required
 def tasks_creator():
     if request.form.get('calendar') == 'on':
         calendar_date = datetime(int(request.form.get('year')),
@@ -47,8 +98,7 @@ def tasks_creator():
     else:
         calendar_date = None
 
-    # ToDo(den) get user_id from header (global dict...(= )
-    create_task(user_id=user_id,
+    create_task(user_id=current_user.id,
                 task_name=request.form.get('task_title'),
                 calendar_date=calendar_date)
     # ToDo(den) check return status
@@ -59,6 +109,7 @@ def tasks_creator():
 
 @app.route(tasks_edit_route + '/', methods=['get'])
 @app.route(tasks_edit_route, methods=['get'])
+@login_required
 def tasks_edit(task_id):
     task = get_task_by_id(task_id)
     url_for_redirect = get_parameter()
@@ -91,6 +142,7 @@ def tasks_edit(task_id):
 
 
 @app.route(task_editor_link, methods=['post'])
+@login_required
 def tasks_editor():
     task_id = request.form.get('task')
     task = get_task_by_id(task_id)
@@ -134,8 +186,8 @@ def tasks_editor():
     return redirect(url_for_redirect)
 
 
-# Delete task
 @app.route(tasks_delete_route, methods=['get'])
+@login_required
 def task_remover(task_id):
     delete_task(task_id)
 
@@ -145,8 +197,8 @@ def task_remover(task_id):
     return redirect(url_for_redirect)
 
 
-# Close/ reopen task
 @app.route(tasks_close_reopen_route, methods=['get'])
+@login_required
 def tasks_close_reopen(task_id):
     status = get_task_by_id(task_id)['status']
 
@@ -163,8 +215,8 @@ def tasks_close_reopen(task_id):
     return redirect(url_for_redirect)
 
 
-# Archive task
 @app.route(tasks_archive_route, methods=['get'])
+@login_required
 def tasks_archive(task_id):
     status = get_task_by_id(task_id)['status']
 
@@ -186,11 +238,12 @@ def page_of_years():
 
 @app.route(months_route + '/', methods=['get'])
 @app.route(months_route, methods=['get'])
+@login_required
 def page_of_months(year_id):
     set_parameters(base_url=request.url)
 
     calendar = border_items(year_id)
-    return gen_year_cell(user_id, year_id).format(
+    return gen_year_cell(current_user.id, year_id).format(
         year=year_id,
         current_item=year_id,
         prev_item=calendar['prev_y'],
@@ -201,6 +254,7 @@ def page_of_months(year_id):
 
 @app.route(days_route + '/', methods=['get'])
 @app.route(days_route, methods=['get'])
+@login_required
 def page_of_days(year_id, month_id):
     set_parameters(base_url=request.url)
 
@@ -214,11 +268,13 @@ def page_of_days(year_id, month_id):
                             next_year=calendar['next_y'],
                             prev_month=calendar['prev_m'],
                             next_month=calendar['next_m'],
-                            table=gen_month_cell(year_id, month_id))
+                            table=gen_month_cell(current_user.id,
+                                                 year_id, month_id))
 
 
 @app.route(hours_route + '/', methods=['get'])
 @app.route(hours_route, methods=['get'])
+@login_required
 def page_of_hours(year_id, month_id, day_id):
     set_parameters(base_url=request.url)
 
@@ -235,20 +291,24 @@ def page_of_hours(year_id, month_id, day_id):
                              next_month=calendar['next_m'],
                              prev_day=calendar['prev_d'],
                              next_day=calendar['next_d'],
-                             table=gen_day_cell(year_id, month_id, day_id))
+                             table=gen_day_cell(current_user.id,
+                                                year_id, month_id, day_id))
 
 
 @app.route(daily_route + '/', methods=['get'])
 @app.route(daily_route, methods=['get'])
+@login_required
 def daily_page():
     set_parameters(base_url=request.url)
 
     archive = True if request.args.get('archive') == 'True' else False
-    body = daily_body.format(table=gen_daily_cells(user_id, archive),
+    body = daily_body.format(table=gen_daily_cells(current_user.id, archive),
                              archive=not archive)
 
     return body.replace('>Daily<', '>Archive<') if archive else body
 
 
 if __name__ == '__main__':
+    login_manager.init_app(app)
+    app.secret_key = os.urandom(12)
     app.run(host=config.host, port=int(config.port), debug=config.debug)
