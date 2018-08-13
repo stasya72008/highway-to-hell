@@ -15,7 +15,7 @@ class SQLTasks(SQlDriver):
     def __init__(self):
         SQlDriver.__init__(self)
 
-    def add_task(self, user_id, name, calendar_date=None):
+    def add_task(self, user_id, name, calendar_date=''):
         session = self.Session()
         task = Task(user_id, name, calendar_date)
         try:
@@ -29,7 +29,8 @@ class SQLTasks(SQlDriver):
         finally:
             session.close()
 
-    def update_task(self, task_id, name='', status=None, calendar_date=None):
+    def update_task(self, task_id, name='', status=None, calendar_date='',
+                    position=0):
         session = self.Session()
         try:
             task = session.query(Task).filter_by(id=task_id).first()
@@ -39,6 +40,8 @@ class SQLTasks(SQlDriver):
                 task.status = status
             if calendar_date:
                 task.calendar_date = calendar_date
+            if position:
+                task.position = position
             session.commit()
             session.refresh(task)
             return entity_to_dict(task)

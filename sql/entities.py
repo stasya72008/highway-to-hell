@@ -9,9 +9,11 @@ class User(Base):
 
     id = Column('ID', Integer, primary_key=True)
     name = Column('Username', String(length=255), nullable=False)
+    role = Column('Role', String(length=50), ForeignKey('roles.ID'), default=2)
 
-    def __init__(self, name):
+    def __init__(self, name, role):
         self.name = name
+        self.role = role
 
 
 class Task(Base):
@@ -23,9 +25,19 @@ class Task(Base):
     date = Column('Date', TIMESTAMP)
     status = Column('Status', Enum('active', 'done', 'deleted', 'archive'),
                     nullable=False, default='active')
-    calendar_date = Column('Calendar_date', DATETIME)
+    calendar_date = Column('Calendar_date', DATETIME, nullable=False,
+                           default='0000-00-00 00:00:00')
+    position = Column('Position', Integer, nullable=False, default=999999)
 
-    def __init__(self, user_id, name, calendar_date):
+    def __init__(self, user_id, name, calendar_date, position=999999):
         self.user_id = user_id
         self.name = name
         self.calendar_date = calendar_date
+        self.position = position
+
+
+class Role(Base):
+    __tablename__ = 'roles'
+
+    id = Column('ID', Integer, primary_key=True)
+    role_name = Column('Role', String(50), nullable=False)

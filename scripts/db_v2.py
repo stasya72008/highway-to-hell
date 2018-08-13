@@ -23,11 +23,11 @@ try:
         db.cursor().execute(query)
         query = "INSERT INTO roles (ID, Role) VALUES (2, 'Regular')"
         db.cursor().execute(query)
-        query = "ALTER TABLE users ADD Role int DEFAULT 2"
+        query = "ALTER TABLE users ADD Role int DEFAULT 2 NOT NULL"
         db.cursor().execute(query)
         query = "ALTER TABLE users ADD FOREIGN KEY (Role) REFERENCES roles(ID)"
         db.cursor().execute(query)
-        query = "ALTER TABLE tasks ADD Position int DEFAULT 999999"
+        query = "ALTER TABLE tasks ADD Position int NOT NULL DEFAULT 999999"
         db.cursor().execute(query)
 
 finally:
