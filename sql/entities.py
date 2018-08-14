@@ -10,10 +10,12 @@ class User(Base):
     id = Column('ID', Integer, primary_key=True)
     name = Column('Username', String(length=255), nullable=False)
     role = Column('Role', String(length=50), ForeignKey('roles.ID'), default=2)
+    password = Column('Password', String(length=25), nullable=False)
 
-    def __init__(self, name, role):
+    def __init__(self, name, role, pwd):
         self.name = name
         self.role = role
+        self.password = pwd
 
 
 class Task(Base):

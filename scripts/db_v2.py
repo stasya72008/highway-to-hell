@@ -27,6 +27,8 @@ try:
         db.cursor().execute(query)
         query = "ALTER TABLE users ADD FOREIGN KEY (Role) REFERENCES roles(ID)"
         db.cursor().execute(query)
+        query = "ALTER TABLE users ADD Password varchar(25) NOT NULL"
+        db.cursor().execute(query)
         query = "ALTER TABLE tasks ADD Position int NOT NULL DEFAULT 999999"
         db.cursor().execute(query)
 

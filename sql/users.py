@@ -10,9 +10,9 @@ class SQLUsers(SQlDriver):
     def __init__(self):
         SQlDriver.__init__(self)
 
-    def add_user(self, user_name):
+    def add_user(self, user_name, role, password):
         session = self.Session()
-        user = User(user_name)
+        user = User(user_name, role, password)
         try:
             session.add(user)
             session.commit()
@@ -24,11 +24,16 @@ class SQLUsers(SQlDriver):
         finally:
             session.close()
 
-    def update_user(self, user_id, user_name):
+    def update_user(self, user_id, user_name, role, password):
         session = self.Session()
         try:
             user = session.query(User).filter_by(id=user_id).first()
-            user.name = user_name
+            if user_name:
+                user.name = user_name
+            if role:
+                user.role = role
+            if password:
+                user.password = password
             session.commit()
             session.refresh(user)
             return entity_to_dict(user)
