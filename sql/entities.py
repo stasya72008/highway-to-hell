@@ -8,13 +8,13 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column('ID', Integer, primary_key=True)
-    name = Column('Username', String(length=255), nullable=False)
-    role = Column('Role', String(length=50), ForeignKey('roles.ID'), default=2)
+    name = Column('Username', String(length=255), nullable=False, unique=True)
+    role = Column('Role', String(length=50), ForeignKey('roles.ID'))
     password = Column('Password', String(length=25), nullable=False)
 
-    def __init__(self, name, role, pwd):
+    def __init__(self, name, pwd, role=None):
         self.name = name
-        self.role = role
+        self.role = role if role else 2
         self.password = pwd
 
 
@@ -29,13 +29,13 @@ class Task(Base):
                     nullable=False, default='active')
     calendar_date = Column('Calendar_date', DATETIME, nullable=False,
                            default='0000-00-00 00:00:00')
-    position = Column('Position', Integer, nullable=False, default=999999)
+    position = Column('Position', Integer, nullable=False)
 
-    def __init__(self, user_id, name, calendar_date, position=999999):
+    def __init__(self, user_id, name, calendar_date, position=None):
         self.user_id = user_id
         self.name = name
         self.calendar_date = calendar_date
-        self.position = position
+        self.position = position if position else 999999
 
 
 class Role(Base):

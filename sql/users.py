@@ -11,8 +11,8 @@ class SQLUsers(SQlDriver):
         SQlDriver.__init__(self)
 
     @helper_session
-    def add_user(self, user_name, role, password):
-        user = User(user_name, role, password)
+    def add_user(self, user_name, password, role=None):
+        user = User(user_name, password, role)
         self.temp_session.add(user)
         self.temp_session.commit()
         self.temp_session.refresh(user)
@@ -41,6 +41,12 @@ class SQLUsers(SQlDriver):
         query = self.temp_session.query(User).filter_by(id=user_id).first()
         return entity_to_dict(query)
 
+    @helper_session
     def get_all_users(self):
         query = self.temp_session.query(User).all()
+        return entity_to_dict(query)
+
+    @helper_session
+    def get_user_by_name(self, username):
+        query = self.temp_session.query(User).filter_by(name=username).first()
         return entity_to_dict(query)
