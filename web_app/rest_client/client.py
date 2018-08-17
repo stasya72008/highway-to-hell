@@ -10,6 +10,7 @@ user_tasks = base_url + 'users/{user_id}/tasks'
 tasks_count = user_tasks + '/count'
 task_url = base_url + 'tasks/{task_id}'
 tasks_url = base_url + 'tasks'
+user_name_url = base_url + 'users/{user_name}'
 
 
 def get_all_user_tasks(user_id):
@@ -34,7 +35,7 @@ def get_task_count_for_period(user_id, year, month=None):
     return json.loads(resp.text)
 
 
-def create_task(user_id, task_name, calendar_date=None):
+def create_task(user_id, task_name, calendar_date=''):
     task = {'user_id': user_id,
             'name': task_name,
             'calendar_date': calendar_date}
@@ -47,7 +48,7 @@ def delete_task(task_id):
     return requests.delete(task_url.format(task_id=task_id))
 
 
-def edit_task(task_id, task_name='', calendar_date='', status=''):
+def edit_task(task_id, task_name='', calendar_date='', status='', position=0):
     data = {}
     if task_name:
         data['name'] = task_name
@@ -55,5 +56,12 @@ def edit_task(task_id, task_name='', calendar_date='', status=''):
         data['calendar_date'] = calendar_date
     if status:
         data['status'] = status
+    if position:
+        data['position'] = position
     resp = requests.put(task_url.format(task_id=task_id), json=data)
+    return json.loads(resp.text)
+
+
+def get_user_by_name(user_name):
+    resp = requests.get(user_name_url.format(user_name=user_name))
     return json.loads(resp.text)

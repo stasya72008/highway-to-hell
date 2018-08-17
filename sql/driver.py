@@ -21,3 +21,4 @@ class SQlDriver(object):
             conn.execute(use_db_query)
 
         self.Session = sessionmaker(bind=self.engine)
+        self.temp_session = None

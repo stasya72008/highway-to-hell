@@ -12,3 +12,17 @@ def entity_to_dict(query_result):
         result = query_result.__dict__
         result.pop('_sa_instance_state', None)
     return result
+
+
+def helper_session(func):
+    def wrapper(self, *args, **kwargs):
+        self.temp_session = self.Session()
+        try:
+            return func(self, *args, **kwargs)
+        except:
+            self.temp_session.rollback()
+            raise
+        finally:
+            self.temp_session.close()
+    return wrapper
+

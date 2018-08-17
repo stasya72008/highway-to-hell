@@ -29,7 +29,7 @@ query = "CREATE table IF NOT EXISTS tasks (" \
         "Name varchar(255) NOT NULL," \
         "Date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()," \
         "Status enum('active', 'done', 'deleted', 'archive') NOT NULL DEFAULT 'active'," \
-        "Calendar_date varchar(15)," \
+        "Calendar_date DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'," \
         "PRIMARY KEY (ID)," \
         "FOREIGN KEY (UserID) REFERENCES users(ID)" \
         ")"

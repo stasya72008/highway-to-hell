@@ -67,6 +67,12 @@ def get_user_tasks(user_id):
     return json.dumps(user_tasks, default=str)
 
 
+@app.route('/users/<string:user_name>', methods=['GET'])
+def get_user_by_name(user_name):
+    user = sql_users.get_user_by_name(user_name)
+    return json.dumps(user) if user else not_found(404)
+
+
 @app.route('/users/<int:user_id>/tasks/count', methods=['GET'])
 def get_task_counts_for_period(user_id):
     period = request.args
