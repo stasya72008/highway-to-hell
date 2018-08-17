@@ -1,7 +1,7 @@
 import os
 import config
 
-from flask import Flask, flash, request, redirect, render_template, g, url_for
+from flask import Flask, flash, request, redirect, render_template
 from flask_login import LoginManager, login_user, login_required, \
     logout_user, UserMixin, current_user
 
@@ -36,7 +36,11 @@ def load_user(user_id):
 
 @app.after_request
 def redirect_to_signing(response):
-    return redirect('/login') if response.status_code == 401 else response
+        if response.status_code == 401:
+            flash("Please, Login!")
+            return redirect('/login')
+        else:
+            return response
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -46,11 +50,10 @@ def login():
         user = [u for u in get_users() if
                 u['name'] == request.form['username']]
         if user:
-            flash("Logged In!")
             login_user(UserLogin(id=user[0]['id'], name=user[0]['name']))
             return daily_page()
         else:
-            flash('wrong password!')
+            flash('Wrong user name or password!')
             return render_template('login.html')
     else:
         return render_template('login.html')
@@ -60,7 +63,8 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return render_template('login.html')
+    flash('Logout successfully!')
+    return redirect('/login')
 
 
 # ------------ TASK ------------------
@@ -305,7 +309,7 @@ def daily_page():
     body = daily_body.format(table=gen_daily_cells(current_user.id, archive),
                              archive=not archive)
 
-    return body.replace('>Daily<', '>Archive<') if archive else body
+    return body.replace('Daily', 'Archive') if archive else body
 
 
 if __name__ == '__main__':
