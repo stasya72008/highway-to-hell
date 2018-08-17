@@ -21,8 +21,8 @@ config = config.CalendarConfig()
 
 # ------------ Login ------------------
 class UserLogin(UserMixin):
-    def __init__(self, id, name=None, password=None, admin=False):
-        self.id = id
+    def __init__(self, user_id, name=None, password=None, admin=False):
+        self.id = user_id
         self.name = name
         self.password = password
         self.is_admin = admin
@@ -50,7 +50,7 @@ def login():
         user = [u for u in get_users() if
                 u['name'] == request.form['username']]
         if user:
-            login_user(UserLogin(id=user[0]['id'], name=user[0]['name']))
+            login_user(UserLogin(user_id=user[0]['id'], name=user[0]['name']))
             return daily_page()
         else:
             flash('Wrong user name or password!')
