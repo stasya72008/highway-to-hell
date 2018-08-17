@@ -13,11 +13,12 @@ app = Flask(__name__)
 config = config.CalendarConfig()
 
 
+# ------------ TASK ------------------
 # Create task
 @app.route(tasks_add_route + '/', methods=['get'])
 @app.route(tasks_add_route, methods=['get'])
 def tasks_add():
-    _today = datetime.datetime.now()
+    _today = datetime.now()
     url_for_redirect = get_parameter()
 
     form = task_preset_form.format(
@@ -38,10 +39,10 @@ def tasks_add():
 @app.route(task_creator_link, methods=['post'])
 def tasks_creator():
     if request.form.get('calendar') == 'on':
-        calendar_date = datetime.datetime(int(request.form.get('year')),
-                                          int(request.form.get('month')),
-                                          int(request.form.get('day')),
-                                          int(request.form.get('hour'))) \
+        calendar_date = datetime(int(request.form.get('year')),
+                                 int(request.form.get('month')),
+                                 int(request.form.get('day')),
+                                 int(request.form.get('hour'))) \
             .strftime("%Y-%m-%d %H:%M:%S")
     else:
         calendar_date = None
@@ -63,10 +64,10 @@ def tasks_edit(task_id):
     url_for_redirect = get_parameter()
 
     if task.get('calendar_date') is not None:
-        obj_date = datetime.datetime.strptime(
-            task.get('calendar_date'), "%Y-%m-%d %H:%M:%S")
+        obj_date = datetime.strptime(task.get('calendar_date'),
+                                     "%Y-%m-%d %H:%M:%S")
     else:
-        obj_date = datetime.datetime.now()
+        obj_date = datetime.now()
 
     form = task_preset_form.format(
         year=obj_date.year,
@@ -95,21 +96,26 @@ def tasks_editor():
     task = get_task_by_id(task_id)
 
     calendar_date = None
+    status = None
     if request.form.get('calendar') == 'on':
-        set_date = datetime.datetime(int(request.form.get('year')),
-                                     int(request.form.get('month')),
-                                     int(request.form.get('day')),
-                                     int(request.form.get('hour')))
+        set_date = datetime(int(request.form.get('year')),
+                            int(request.form.get('month')),
+                            int(request.form.get('day')),
+                            int(request.form.get('hour')))
 
-        if task.get('calendar_date') is not None:
-            t_date = datetime.datetime.strptime(
-                task.get('calendar_date'), "%Y-%m-%d %H:%M:%S")
+        # Calendar is on, task does not have date or has not the same date
+        # - set date, activate task
+        status = 'active'
+        calendar_date = set_date.strftime("%Y-%m-%d %H:%M:%S")
 
-            if set_date != t_date:
-                calendar_date = set_date.strftime("%Y-%m-%d %H:%M:%S")
-        else:
-            calendar_date = set_date.strftime("%Y-%m-%d %H:%M:%S")
+        # Calendar is on, task has the same date - ignore changing
+        if task.get('calendar_date') and \
+            set_date == datetime.strptime(
+                task.get('calendar_date'), "%Y-%m-%d %H:%M:%S"):
 
+            calendar_date = None
+
+    # Calendar is off, task has date - clear date
     elif task.get('calendar_date'):
         calendar_date = '0000-00-00 00:00:00'
 
@@ -120,7 +126,8 @@ def tasks_editor():
     if task_name or calendar_date:
         edit_task(task_id=task_id,
                   task_name=task_name,
-                  calendar_date=calendar_date)
+                  calendar_date=calendar_date,
+                  status=status)
 
     # ToDo(den) check return status
     url_for_redirect = pop_parameter()
@@ -159,15 +166,17 @@ def tasks_close_reopen(task_id):
 # Archive task
 @app.route(tasks_archive_route, methods=['get'])
 def tasks_archive(task_id):
+    status = get_task_by_id(task_id)['status']
 
-    edit_task(task_id, status='archive')
-    # ToDo(den) return error for invalid status
+    edit_task(task_id, status='active') if status == 'archive' \
+        else edit_task(task_id, status='archive')
 
     # ToDo(den) check return status
     url_for_redirect = pop_parameter()
     return redirect(url_for_redirect)
 
 
+# ------------ PAGES ------------------
 # deprecated
 @app.route(years_route + '/', methods=['get'])
 @app.route(years_route, methods=['get'])
@@ -181,12 +190,13 @@ def page_of_months(year_id):
     set_parameters(base_url=request.url)
 
     calendar = border_items(year_id)
-    return gen_year_cell(year_id).format(year=year_id,
-                                         current_item=year_id,
-                                         prev_item=calendar['prev_y'],
-                                         next_item=calendar['next_y'],
-                                         prev_year=calendar['prev_y'],
-                                         next_year=calendar['next_y'])
+    return gen_year_cell(user_id, year_id).format(
+        year=year_id,
+        current_item=year_id,
+        prev_item=calendar['prev_y'],
+        next_item=calendar['next_y'],
+        prev_year=calendar['prev_y'],
+        next_year=calendar['next_y'])
 
 
 @app.route(days_route + '/', methods=['get'])
@@ -234,9 +244,10 @@ def daily_page():
     set_parameters(base_url=request.url)
 
     archive = True if request.args.get('archive') == 'True' else False
-
-    return daily_body.format(table=gen_daily_cells(user_id, archive),
+    body = daily_body.format(table=gen_daily_cells(user_id, archive),
                              archive=not archive)
+
+    return body.replace('>Daily<', '>Archive<') if archive else body
 
 
 if __name__ == '__main__':

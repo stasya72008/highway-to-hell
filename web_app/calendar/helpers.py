@@ -2,7 +2,8 @@ from copy import copy
 import json
 
 from html_template import *
-from web_app.rest_client.client import get_all_user_tasks
+from web_app.rest_client.client import get_all_user_tasks, \
+    get_task_count_for_period, get_tasks_for_period
 
 with open('date_template.json', 'r') as f:
     _date_template = json.loads(f.read())
@@ -33,11 +34,14 @@ def get_parameter():
 # Get / Set Headers
 
 
-def gen_year_cell(year):
+def gen_year_cell(user_id, year):
     full_year = copy(month_table)
+
+    task_count_for_period = get_task_count_for_period(user_id, year)
     for m_index in range(1, 13):
         month_name = _date_template[str(m_index)]
-        task_count = len(get_tasks_for_period(year, m_index))
+
+        task_count = task_count_for_period.get(str(m_index))
         if task_count:
             m_cell = month_cell.format(year=year,
                                        month=m_index,
@@ -62,13 +66,12 @@ def gen_month_cell(year, month):
 
     number_of_d = _date_template[str(year)][str(month)]['days']
     first_d = _date_template[str(year)][str(month)]['first_day']
-    # ToDo add switch to previous and next month / year
     if month == 1:
-        prev_month_days = _date_template[str(year - 1)]['12']['days'] - \
-                     first_d + 2
+        prev_month_days = \
+            _date_template[str(year - 1)]['12']['days'] - first_d + 2
     else:
-        prev_month_days = _date_template[str(year)][str(
-            month - 1)]['days'] - first_d + 2
+        prev_month_days = \
+            _date_template[str(year)][str(month - 1)]['days'] - first_d + 2
 
     # form previous month
     while first_d > day_of_week:
@@ -77,9 +80,10 @@ def gen_month_cell(year, month):
         prev_month_days += 1
         day_of_week += 1
 
-    # form previous month
+    # form current month
+    task_count_for_period = get_task_count_for_period(user_id, year, month)
     while d_index < number_of_d + 1:
-        task_count = len(get_tasks_for_period(year, month, d_index))
+        task_count = task_count_for_period.get(str(d_index))
         if task_count:
             day = day_cell.format(year=year,
                                   month=month,
@@ -113,17 +117,16 @@ def gen_month_cell(year, month):
 
 def gen_day_cell(year, month, day):
     full_day = ''
+
+    tasks = get_tasks_for_period(user_id, year, month, day)
     for h_index in range(0, 24):
-        tasks = get_tasks_for_period(year, month, day, h_index)
+        hour_tasks = [t for t in tasks if datetime.strptime(
+            t.get('calendar_date'), "%Y-%m-%d %H:%M:%S").hour == h_index and
+            t.get('status') in ('active', 'done')]
 
-        cell = cell_add_task_link.format(year=year,
-                                         month=month,
-                                         day=day,
-                                         hour=h_index)
-
-        if tasks:
+        if hour_tasks:
             task_line = ''
-            for task in tasks:
+            for task in hour_tasks:
                 if task.get('status') == 'done':
                     task_name = '<s>{}</s>'.format(task.get('name'))
                 else:
@@ -131,12 +134,17 @@ def gen_day_cell(year, month, day):
                 task_line += t_cell_inner.format(task=task.get('id'),
                                                  task_name=task_name)
             full_day += hour_cell.format(
-                hour=h_index,
                 task_name=t_table_inner.format(tasks=task_line),
-                cell_add_task_link=cell)
+                year=year,
+                month=month,
+                day=day,
+                hour=h_index)
         else:
-            full_day += hour_cell_free.format(hour=h_index,
-                                              cell_add_task_link=cell)
+            full_day += hour_cell_free.format(year=year,
+                                              month=month,
+                                              day=day,
+                                              hour=h_index)
+
     return full_day
 
 
@@ -158,30 +166,6 @@ def gen_daily_cells(user_id, archive=False):
         task_line += t_cell_inner.format(task=task.get('id'),
                                          task_name=task_name)
     return task_line
-
-
-# ToDo(den) move this logic to rest
-def get_tasks_for_period(*args):
-    """ The method for selecting tasks for user by date
-
-    :param args: year, [month], [day], [hour]
-    :return: list of tasks for the period
-    """
-
-    # ToDo(den) get user_id from header or cookies request
-    tasks = get_all_user_tasks(user_id)
-    if len(args) == 4:
-        period = '{} {}'.format('-'.join(["%02d" % p for p in args[:-1]]),
-                                "%02d" % args[-1])
-    else:
-        period = '-'.join(["%02d" % x for x in args])
-
-    tasks = [task for task in tasks if
-             task.get('calendar_date') is not None and
-             task.get('calendar_date').startswith(period) and
-             task.get('status') in ('active', 'done')]
-
-    return tasks
 
 
 def border_items(year, month=None, day=None):
