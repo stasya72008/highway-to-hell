@@ -10,6 +10,7 @@ user_tasks = base_url + 'users/{user_id}/tasks'
 tasks_count = user_tasks + '/count'
 task_url = base_url + 'tasks/{task_id}'
 tasks_url = base_url + 'tasks'
+users_url = base_url + 'users'
 user_name_url = base_url + 'users/{user_name}'
 
 
@@ -59,6 +60,11 @@ def edit_task(task_id, task_name='', calendar_date='', status='', position=0):
     if position:
         data['position'] = position
     resp = requests.put(task_url.format(task_id=task_id), json=data)
+    return json.loads(resp.text)
+
+
+def get_users():
+    resp = requests.get(users_url)
     return json.loads(resp.text)
 
 
