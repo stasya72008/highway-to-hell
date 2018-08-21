@@ -1,4 +1,5 @@
 import os
+import logging
 import config
 
 from flask import Flask, flash, request, redirect, render_template
@@ -10,12 +11,13 @@ from helpers import gen_day_cell, gen_month_cell, gen_year_cell, \
     gen_daily_cells, border_items, \
     set_parameters, pop_parameter, get_parameter
 from web_app.rest_client.client import create_task, delete_task, edit_task, \
-    get_task_by_id, get_users
-
+    get_task_by_id, get_user_by_name
 
 app = Flask(__name__)
 login_manager = LoginManager()
 
+config.LogConfig()
+logger = logging.getLogger("UI")
 config = config.CalendarConfig()
 
 
@@ -37,6 +39,7 @@ def load_user(user_id):
 @app.after_request
 def redirect_to_signing(response):
         if response.status_code == 401:
+            logger.warning('Response code 401. Redirecting user to login page')
             flash("Please, Login!")
             return redirect('/login')
         else:
@@ -47,13 +50,14 @@ def redirect_to_signing(response):
 def login():
     if request.method == 'POST':
         # ToDo(den) Add password
-        user = [u for u in get_users() if
-                u['name'] == request.form['username']]
+        user = get_user_by_name(request.form['username'])
         if user:
-            login_user(UserLogin(user_id=user[0]['id'], name=user[0]['name']))
+            login_user(UserLogin(user_id=user['id'], name=user['name']))
+            logger.info('User %s successfully logged in' % user['name'])
             return daily_page()
         else:
             flash('Wrong user name or password!')
+            logger.warning('User %s login failed' % request.form['username'])
             return render_template('login.html')
     else:
         return render_template('login.html')
@@ -63,6 +67,7 @@ def login():
 @login_required
 def logout():
     logout_user()
+    logger.info('User logged out')
     flash('Logout successfully!')
     return redirect('/login')
 

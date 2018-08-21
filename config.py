@@ -1,6 +1,11 @@
 import configparser
 from os import path
 
+import logging
+from logging.config import fileConfig
+
+from sql.singleton import Singleton
+
 
 class Config(object):
     def __init__(self, section):
@@ -105,3 +110,11 @@ class DBConfig(Config):
     @property
     def password(self):
         return self.get_property('pass')
+
+
+class LogConfig:
+    __metaclass__ = Singleton
+
+    def __init__(self):
+        logging.config.fileConfig(
+            path.join(path.dirname(__file__), 'log_config.ini'))
