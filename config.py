@@ -113,8 +113,8 @@ class DBConfig(Config):
 
 
 class LogConfig:
-    __metaclass__ = Singleton
-
     def __init__(self):
         logging.config.fileConfig(
-            path.join(path.dirname(__file__), 'log_config.ini'))
+            path.join(path.dirname(__file__), 'log_config.ini'),
+            defaults={'logfilename': path.join(path.dirname(__file__),
+                                               'hop-hey-lala-ley.log')})
