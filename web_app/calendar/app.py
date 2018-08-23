@@ -41,12 +41,12 @@ def redirect_to_signing(response):
         if response.status_code == 401:
             logger.warning('Response code 401. Redirecting user to login page')
             flash("Please, Login!")
-            return redirect('/login')
+            return redirect(login_link)
         else:
             return response
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route(login_link, methods=["GET", "POST"])
 def login():
     if request.method == 'POST':
         # ToDo(den) Add password
@@ -54,7 +54,7 @@ def login():
         if user:
             login_user(UserLogin(user_id=user['id'], name=user['name']))
             logger.info('User "%s" successfully logged in' % user['name'])
-            return daily_page()
+            return redirect(daily_route)
         else:
             flash('Wrong user name or password!')
             logger.warning('User "%s" login failed' % request.form['username'])
@@ -63,13 +63,13 @@ def login():
         return render_template('login.html')
 
 
-@app.route("/logout")
+@app.route(logout_link)
 @login_required
 def logout():
     logger.info('Logging out user with id "%s"' % current_user.id)
     logout_user()
     flash('Logout successfully!')
-    return redirect('/login')
+    return redirect(login_link)
 
 
 # ------------ TASK ------------------
@@ -238,13 +238,6 @@ def tasks_archive(task_id):
 
 
 # ------------ PAGES ------------------
-# deprecated
-@app.route(years_route + '/', methods=['get'])
-@app.route(years_route, methods=['get'])
-def page_of_years():
-    return body_html.replace('[table]', year_table)
-
-
 @app.route(months_route + '/', methods=['get'])
 @app.route(months_route, methods=['get'])
 @login_required

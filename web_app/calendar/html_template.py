@@ -20,7 +20,9 @@ daily_page = daily_page.replace('[daily_route]', daily_route) \
                        .replace('[months_link]', months_link)\
                        .replace('[days_link]', days_link)\
                        .replace('[hours_link]', hours_link)\
-                       .replace('[tasks_add_route]', tasks_add_route)
+                       .replace('[tasks_add_route]', tasks_add_route)\
+                       .replace('[logout]', logout_link)
+
 
 daily_body = daily_page.format(year=_today.year,
                                month=_today.month,
@@ -31,7 +33,8 @@ main_page = main_page.replace('[daily_route]', daily_route) \
                      .replace('[months_link]', months_link) \
                      .replace('[days_link]', days_link) \
                      .replace('[hours_link]', hours_link) \
-                     .replace('[tasks_add_route]', tasks_add_route)
+                     .replace('[tasks_add_route]', tasks_add_route) \
+                     .replace('[logout]', logout_link)
 
 body_html = main_page.format(year=_today.year,
                              month=_today.month,
@@ -61,7 +64,7 @@ hour_cell_free = '''
     </th>
 </tr>'''.replace('[tasks_add_route]', tasks_add_route)
 hour_cell = '''
-<tr bgcolor="#c9f1de">
+<tr style="background-color: #c9f1de">
     <th width=40>
         <a href="[tasks_add_route]?y={year}&m={month}&d={day}&h={hour}">{hour}</a>
     </th>
@@ -107,13 +110,13 @@ day_table = body_html.replace('[current_link]', months_link)\
 # task_count
 # year, month, day (hours_link)
 day_cell = '''
-<th width=50 bgcolor="#c9f1de"> <a href="{hours_link}">{{day}} ({{task_count}})</a>
+<th width=50 style="background-color: #c9f1de"> <a href="{hours_link}">{{day}} ({{task_count}})</a>
 </th>'''.format(hours_link=hours_link)
 day_cell_free = '''
 <th width=50 > <a href="{hours_link}">{{day}}</a></th>
 '''.format(hours_link=hours_link)
 
-day_cell_another_month = '<th width=50 bgcolor="#aaa">{day}</th>'
+day_cell_another_month = '<th width=50 style="background-color: #AAA">{day}</th>'
 
 # ================ WEEK ========================
 
@@ -135,18 +138,5 @@ month_cell_free = '''
 <th><a href="{months_link}/{{month}}/days">{{month_name}}</a></th>
 '''.format(months_link=months_link)
 month_cell = '''
-<th bgcolor="#c9f1de"><a href="{months_link}/{{month}}/days">{{month_name}} ({{task_count}})</a></th>
+<th style="background-color: #c9f1de"><a href="{months_link}/{{month}}/days">{{month_name}} ({{task_count}})</a></th>
 '''.format(months_link=months_link)
-
-# ================= YEAR ========================
-# deprecated
-year_table = '''
-<table style="width:50%">
-   <tr>
-       <th><a href="{year_2018_link}"> 2018 </a></th>
-       <th><a href="{year_2019_link}"> 2019 </a></th>
-       <th><a href="{year_2020_link}"> 2020 </a></th>
-   </tr>
-</table>'''.format(year_2018_link=year_2018_link,
-                   year_2019_link=year_2019_link,
-                   year_2020_link=year_2020_link)
