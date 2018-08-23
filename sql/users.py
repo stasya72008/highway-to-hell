@@ -42,6 +42,7 @@ class SQLUsers(SQlDriver):
     def delete_user(self, user_id):
         logger.info('Deleting user with id "%s" in database' % user_id)
         self.temp_session.query(User).filter_by(id=user_id).delete()
+        logger.info('User deleted successfully')
         self.temp_session.commit()
 
     @helper_session

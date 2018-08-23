@@ -23,7 +23,6 @@ _global_url_for_redirect = tasks_add_route
 
 def set_parameters(base_url):
     global _global_url_for_redirect
-    logger.info('Set global url for redirect %s' % base_url)
     _global_url_for_redirect = base_url
 
 
@@ -31,7 +30,6 @@ def pop_parameter():
     global _global_url_for_redirect
     url_for_redirect = _global_url_for_redirect
     _global_url_for_redirect = tasks_add_route
-    logger.info('Set url for redirect %s' % url_for_redirect)
     return url_for_redirect
 
 

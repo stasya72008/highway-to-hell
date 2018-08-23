@@ -70,10 +70,8 @@ def get_user_tasks(user_id):
         year = period['year']
         month = period.get('month', None)
         day = period.get('day', None)
-        logger.info('Get tasks for user_id "{user_id}" for year={year}, '
-                    'month={month}, day={day}'.format(user_id=user_id,
-                                                      year=year, month=month,
-                                                      day=day))
+        logger.info('Get tasks for user_id "{}" for year={}, month={}, day={}'
+                    .format(user_id, year, month,day))
         user_tasks = sql_tasks.get_tasks_for_period(user_id, year, month, day)
     else:
         user_tasks = sql_tasks.get_all_user_tasks(user_id)

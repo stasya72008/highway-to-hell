@@ -7,7 +7,6 @@ logger = logging.getLogger("SQL")
 
 def entity_to_dict(query_result):
     if query_result is None:
-        logger.debug('Query result is empty')
         return dict()
 
     if isinstance(query_result, list):
@@ -19,7 +18,6 @@ def entity_to_dict(query_result):
     else:
         result = query_result.__dict__
         result.pop('_sa_instance_state', None)
-    logger.debug('Query OK')
     return result
 
 

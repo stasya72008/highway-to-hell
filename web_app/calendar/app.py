@@ -66,8 +66,8 @@ def login():
 @app.route("/logout")
 @login_required
 def logout():
+    logger.info('Logging out user with id "%s"' % current_user.id)
     logout_user()
-    logger.info('User logged out')
     flash('Logout successfully!')
     return redirect('/login')
 
