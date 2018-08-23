@@ -53,11 +53,11 @@ def login():
         user = get_user_by_name(request.form['username'])
         if user:
             login_user(UserLogin(user_id=user['id'], name=user['name']))
-            logger.info('User %s successfully logged in' % user['name'])
+            logger.info('User "%s" successfully logged in' % user['name'])
             return daily_page()
         else:
             flash('Wrong user name or password!')
-            logger.warning('User %s login failed' % request.form['username'])
+            logger.warning('User "%s" login failed' % request.form['username'])
             return render_template('login.html')
     else:
         return render_template('login.html')

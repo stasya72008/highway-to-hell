@@ -1,4 +1,5 @@
 import logging
+
 import config
 config.LogConfig()
 logger = logging.getLogger("SQL")
@@ -18,7 +19,7 @@ def entity_to_dict(query_result):
     else:
         result = query_result.__dict__
         result.pop('_sa_instance_state', None)
-    logger.debug('Query result: %s' % result)
+    logger.debug('Query OK')
     return result
 
 
@@ -28,8 +29,8 @@ def helper_session(func):
         try:
             return func(self, *args, **kwargs)
         except:
-            logger.error("Ooops, query was not executed. "
-                         "Rolling back transaction")
+            logger.exception("Ooops, query was not executed. "
+                             "Rolling back transaction")
             self.temp_session.rollback()
             raise
         finally:

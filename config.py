@@ -4,8 +4,6 @@ from os import path
 import logging
 from logging.config import fileConfig
 
-from sql.singleton import Singleton
-
 
 class Config(object):
     def __init__(self, section):
