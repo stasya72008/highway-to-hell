@@ -1,6 +1,9 @@
 import configparser
 from os import path
 
+import logging
+from logging.config import fileConfig
+
 
 class Config(object):
     def __init__(self, section):
@@ -105,3 +108,11 @@ class DBConfig(Config):
     @property
     def password(self):
         return self.get_property('pass')
+
+
+class LogConfig:
+    def __init__(self):
+        logging.config.fileConfig(
+            path.join(path.dirname(__file__), 'log_config.ini'),
+            defaults={'logfilename': path.join(path.dirname(__file__),
+                                               'hop-hey-lala-ley.log')})

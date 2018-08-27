@@ -1,3 +1,10 @@
+import logging
+
+import config
+config.LogConfig()
+logger = logging.getLogger("SQL")
+
+
 def entity_to_dict(query_result):
     if query_result is None:
         return dict()
@@ -20,6 +27,8 @@ def helper_session(func):
         try:
             return func(self, *args, **kwargs)
         except:
+            logger.exception("Ooops, query was not executed. "
+                             "Rolling back transaction")
             self.temp_session.rollback()
             raise
         finally:

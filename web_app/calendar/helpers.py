@@ -5,6 +5,11 @@ from html_template import *
 from web_app.rest_client.client import get_all_user_tasks, \
     get_task_count_for_period, get_tasks_for_period
 
+import logging
+import config
+config.LogConfig()
+logger = logging.getLogger("UI")
+
 with open('date_template.json', 'r') as f:
     _date_template = json.loads(f.read())
 
