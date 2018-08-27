@@ -1,5 +1,6 @@
 import configparser
 from os import path
+from shutil import copy2
 
 import logging
 from logging.config import fileConfig
@@ -10,6 +11,11 @@ class Config(object):
         self._parser = configparser.RawConfigParser()
         self._config_file = path.join(path.dirname(__file__), 'config.ini')
         self._section = ''
+        config_file_template = path.join(path.dirname(__file__),
+                                         'config_example.ini')
+        if not path.exists(self._config_file):
+            copy2(config_file_template, self._config_file)
+
         try:
             self._parser.read(self._config_file)
         except configparser.Error, exc:

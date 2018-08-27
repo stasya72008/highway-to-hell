@@ -3,6 +3,7 @@ __pycache__/
 venv/
 .idea/
 *.log
+config.ini
 
 # Distribution / packaging
 .Python
