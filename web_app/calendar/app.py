@@ -288,20 +288,21 @@ def page_of_hours(year_id, month_id, day_id):
     set_parameters(base_url=request.url)
 
     calendar = border_items(year_id, month_id, day_id)
-    return hour_table.format(year=year_id,
-                             month=month_id,
-                             day=day_id,
-                             current_item=day_id,
-                             prev_item=calendar['prev_d'],
-                             next_item=calendar['next_d'],
-                             prev_year=calendar['prev_y'],
-                             next_year=calendar['next_y'],
-                             prev_month=calendar['prev_m'],
-                             next_month=calendar['next_m'],
-                             prev_day=calendar['prev_d'],
-                             next_day=calendar['next_d'],
-                             table=gen_day_cell(current_user.id,
-                                                year_id, month_id, day_id))
+    return unicode(hour_table).format(year=year_id,
+                                      month=month_id,
+                                      day=day_id,
+                                      current_item=day_id,
+                                      prev_item=calendar['prev_d'],
+                                      next_item=calendar['next_d'],
+                                      prev_year=calendar['prev_y'],
+                                      next_year=calendar['next_y'],
+                                      prev_month=calendar['prev_m'],
+                                      next_month=calendar['next_m'],
+                                      prev_day=calendar['prev_d'],
+                                      next_day=calendar['next_d'],
+                                      table=gen_day_cell(current_user.id,
+                                                         year_id, month_id,
+                                                         day_id))
 
 
 @app.route(daily_route + '/', methods=['get'])
@@ -311,8 +312,8 @@ def daily_page():
     set_parameters(base_url=request.url)
 
     archive = True if request.args.get('archive') == 'True' else False
-    body = daily_body.format(table=gen_daily_cells(current_user.id, archive),
-                             archive=not archive)
+    body = unicode(daily_body).format(
+        table=gen_daily_cells(current_user.id, archive), archive=not archive)
 
     return body.replace('Daily', 'Archive') if archive else body
 

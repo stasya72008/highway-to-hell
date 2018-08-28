@@ -132,13 +132,13 @@ def gen_day_cell(user_id, year, month, day):
             task_line = ''
             for task in hour_tasks:
                 if task.get('status') == 'done':
-                    task_name = '<s>{}</s>'.format(task.get('name'))
+                    task_name = u'<s>{}</s>'.format(task.get('name'))
                 else:
                     task_name = task.get('name')
-                task_line += t_cell_inner.format(task=task.get('id'),
-                                                 task_name=task_name)
-            full_day += hour_cell.format(
-                task_name=t_table_inner.format(tasks=task_line),
+                task_line += unicode(t_cell_inner).format(task=task.get('id'),
+                                                          task_name=task_name)
+            full_day += unicode(hour_cell).format(
+                task_name=unicode(t_table_inner).format(tasks=task_line),
                 year=year,
                 month=month,
                 day=day,
@@ -164,11 +164,11 @@ def gen_daily_cells(user_id, archive=False):
     task_line = ''
     for task in tasks:
         if task.get('status') == 'done':
-            task_name = '<s>{}</s>'.format(task.get('name'))
+            task_name = u'<s>{}</s>'.format(task.get('name'))
         else:
             task_name = task.get('name')
-        task_line += t_cell_inner.format(task=task.get('id'),
-                                         task_name=task_name)
+        task_line += unicode(t_cell_inner).format(task=task.get('id'),
+                                                  task_name=task_name)
     return task_line
 
 

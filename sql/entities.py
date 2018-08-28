@@ -23,7 +23,8 @@ class Task(Base):
 
     id = Column('ID', Integer, primary_key=True)
     user_id = Column('UserID', Integer, ForeignKey('users.ID'))
-    name = Column('Name', String(length=255), nullable=False)
+    name = Column('Name', String(length=255, convert_unicode=True,
+                                 collation='utf8'), nullable=False)
     date = Column('Date', TIMESTAMP)
     status = Column('Status', Enum('active', 'done', 'deleted', 'archive'),
                     nullable=False, default='active')
