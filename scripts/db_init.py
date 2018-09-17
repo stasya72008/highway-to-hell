@@ -10,6 +10,9 @@ cursor = db.cursor()
 query = 'CREATE DATABASE IF NOT EXISTS highway'
 cursor.execute(query)
 
+query = 'ALTER DATABASE highway CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
+cursor.execute(query)
+
 query = 'USE highway'
 cursor.execute(query)
 
@@ -33,6 +36,9 @@ query = "CREATE table IF NOT EXISTS tasks (" \
         "PRIMARY KEY (ID)," \
         "FOREIGN KEY (UserID) REFERENCES users(ID)" \
         ")"
+cursor.execute(query)
+
+query = "ALTER TABLE tablename CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
 cursor.execute(query)
 
 db.close()
