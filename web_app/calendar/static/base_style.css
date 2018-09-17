@@ -1,0 +1,37 @@
+body {
+    font-family: Arial;
+    background-color: #aedbf9;
+    padding: 30px;
+}
+table {
+    border: none;
+    border-radius: 5px;
+}
+th, td {
+    border: 1px solid black;
+    collapse;
+    border-radius: 5px;
+    background-color: #FFF;
+}
+a {
+    text-decoration: none; color: black; display: block;
+}
+td.icon-cell {
+    width: 26px;
+    vertical-align: middle;
+}
+img.icon {
+    width: 20px;
+    height: 20px;
+}
+table.inner {
+    height: 100%;
+    width: 100%;
+    border-spacing: 0;
+    background-color: #c9f1de;
+    border: none;
+}
+table.inner td {
+    background-color: #c9f1de;
+    border: none;
+}
